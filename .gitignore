@@ -14,3 +14,17 @@ _book
 *.epub
 *.mobi
 *.pdf
+
+#sensitive configs 
+*.env
+*.crt
+*.key
+*.pem
+*.txt
+*.toml
+my.cnf
+*/docker_secrets/*
+
+#ignored app stacks
+/arrr*
+/authelia*
