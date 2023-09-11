@@ -1,0 +1,23 @@
+---
+version: "2.1"
+volumes:
+  vscode_data: {}
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=CDT/UTC
+      - PASSWORD=password #optional
+      - HASHED_PASSWORD= #optional
+      - SUDO_PASSWORD=password #optional
+      - SUDO_PASSWORD_HASH= #optional
+      - PROXY_DOMAIN=code-server.molovestoshare.com #optional
+      - DEFAULT_WORKSPACE=/config/workspace #optional
+    volumes:
+      - vscode_data:/config
+    ports:
+      - 4545:8443
+    restart: unless-stopped

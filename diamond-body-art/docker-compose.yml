@@ -1,0 +1,64 @@
+# Title: diamond-body-art
+# Description: reds website
+# Icon URL: https://www.color-meanings.com/wp-content/uploads/2022/09/rainbow-colored-diamond-1024x768.png
+version: "3"
+
+networks:
+  dbanet:
+    driver: bridge
+
+services:
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    restart: always
+    container_name: red-ghost-tunnel
+  proxy:
+    image: nginx:latest
+    container_name: nginx-red-ghost-proxy
+    networks:
+      - dbanet
+    ports:
+      - ":80"
+      - ":443"
+      - ":8080"
+      - ":2368"
+    expose:
+      - 80
+      - 443
+      - 8080
+      - 2368
+      - 33004
+    depends_on:
+      - ghost
+    volumes:
+    # nginx ssl config:
+      # ssl_certificate      /etc/ssl/certs/dba.red.crt; 
+      # ssl_certificate_key  /etc/ssl/private/dba.red.key;
+      - $PWD/nginx/crt:/etc/ssl/certs/dba.red.crt:z
+      - $PWD/nginx/key:/etc/ssl/private/dba.red.key:z
+      - $PWD/nginx/ghost.conf:/etc/nginx/sites-enabled/ghost.conf:z
+  ghost:
+    image: ghost:latest
+    container_name: dba-red-ghost
+    hostname: dba-red-ghost
+    restart: always
+    networks:
+      - dbanet
+    ports:
+      - "33004:2368"
+    depends_on:
+      - ghost_db
+    env_file: dba-red.env
+    volumes:
+      - /data/compose/dba_ghost/content:/var/lib/ghost/content
+  ghost_db:
+    image: mariadb:latest
+    container_name: red-ghost-db 
+    hostname: red-ghost-db
+    restart: always
+    env_file: dba-red.env
+    networks:
+      - dbanet
+    volumes:
+      - /data/compose/dba_db/ghost/mysql:/var/lib/mysql

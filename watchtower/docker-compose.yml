@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  watchtower:
+    container_name: mgmt-stack-watchtower
+    image: containrrr/watchtower
+    hostname: watchtowerrr
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped

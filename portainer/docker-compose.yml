@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  portainer:
+    container_name: mgmt-stack-portainer
+    hostname: portainer
+    image: portainer/portainer-ee:latest
+    ports:
+      - 32772:9000
+    volumes:
+      - /data/compose/portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    

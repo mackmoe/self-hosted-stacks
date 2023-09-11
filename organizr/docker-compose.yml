@@ -1,0 +1,45 @@
+# Title: Organizr 
+# Description: Home Lab Services Manager Dashboard
+# Icon URL: https://demo.organizr.app/plugins/images/organizr/logo.png
+version: '3.9'
+services:
+  organizr:
+    container_name: organizr
+    hostname: organizr
+    image: organizr/organizr:latest
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    ports:
+      - 8480:80
+    volumes:
+      - /data/compose/organizr:/config
+  speedtest:
+    container_name: speedtest
+    hostname: speedtest
+    image: henrywhitaker3/speedtest-tracker:latest
+    ports:
+        - 8765:80
+    volumes:
+        - /data/compose/speedtest:/config
+    environment:
+        - TZ='America/Chicago'
+        - PGID=1000
+        - PUID=1000
+        - INFLUXDB_RETENTION=10d
+        - OOKLA_EULA_GDPR=true
+        - GF_AUTH_PROXY_ENABLED=true
+        - GF_AUTH_PROXY_HEADER_NAME="X-WEBAUTH-USER"
+        - GF_AUTH_PROXY_HEADER_PROPERTY="username"
+        - GF_AUTH_PROXY_AUTO_SIGN_UP=true
+        - GF_AUTH_PROXY_LDAP_SYNC_TTL=60
+        - GF_AUTH_PROXY_WHITELIST="192.0.0.0/24,172.0.0.0/24"
+        - GF_AUTH_PROXY_HEADERS="Email:X-User-Email, Name:X-User-Name"
+    logging:
+        driver: "json-file"
+        options:
+            max-file: "10"
+            max-size: "20M"
+    restart: unless-stopped

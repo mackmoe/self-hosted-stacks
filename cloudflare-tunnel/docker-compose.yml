@@ -1,0 +1,12 @@
+version: '3'
+
+volumes:
+  tunnel_data: {}
+
+services:
+  tunnel:
+    image: cloudflare/cloudflared
+    restart: always
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=my_token_here

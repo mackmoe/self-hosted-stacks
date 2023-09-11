@@ -1,0 +1,17 @@
+# Title: doozle
+# Description: Docker Container Logs
+# Icon URL: https://raw.githubusercontent.com/selfhosters/unRAID-CA-templates/master/templates/img/dozzle.png
+version: '3.9'
+services:
+  dozzle:
+    container_name: dozzle
+    hostname: dozzle
+    image: amir20/dozzle:latest
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9999:8888
+    environment:
+      - DOZZLE_ADDR=0.0.0.0:8888
+    restart: unless-stopped

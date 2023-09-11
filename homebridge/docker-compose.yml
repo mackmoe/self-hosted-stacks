@@ -1,0 +1,25 @@
+# Title: homebridge-on-docker
+# Description: HomeKit API for the Impatient
+# Icon URL: https://raw.githubusercontent.com/homebridge/branding/master/logos/homebridge-color-round-stylized.png
+version: '3.9'
+services:
+  homebridge:
+    container_name: homebridge
+    domainname: homebridge.molovestoshare.com
+    image: oznu/homebridge:latest
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /data/compose/homebridge:/homebridge
+    ports:
+      - 8581:8581
+    logging:
+      driver: json-file
+      options:
+        max-size: "20mb"
+        max-file: "1"
+    restart: always

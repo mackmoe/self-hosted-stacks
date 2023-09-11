@@ -1,0 +1,264 @@
+version: '2.1'
+
+networks:
+  monitor-net:
+    driver: bridge
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+    influxdbv2: {}
+    netdata_config: {}
+    netdata_lib: {}
+    netdata_cache: {}
+
+services:
+  influxdb:
+    image: influxdb  #:2.6-alpine
+    env_file:
+      - configuration.env
+    volumes:
+      - influxdbv2:/var/lib/influxdb2:rw
+    ports:
+      - "8086:8086"
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  telegraf:
+    image: telegraf  #:1.25-alpine
+    depends_on:
+      - influxdb
+    volumes:
+      - ./influxdb/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    env_file:
+      - configuration.env
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  loki:
+    image: grafana/loki
+    container_name: loki
+    expose:
+      - 3100
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/config.yml
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    privileged: true
+    pid: "host"
+    command: 
+      - "-config.file=/etc/promtail/config.yml"
+      - "-config.expand-env=true"
+    volumes:
+      - /var/log:/var/log:ro
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+    expose:
+      - 9080
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  ping:
+    tty: true
+    stdin_open: true
+    expose:
+      - 9115
+    ports:
+      - 9115:9115
+    image: prom/blackbox-exporter
+    restart: always
+    volumes:
+      - ./blackbox/blackbox.yml:/config/blackbox.yml
+    command:
+      - '--config.file=/config/blackbox.yml'
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  speedtest:
+    tty: true
+    stdin_open: true
+    expose:
+      - 9798
+    ports:
+      - 9798:9798
+    image: miguelndecarvalho/speedtest-exporter
+    restart: always
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  netdata:
+    image: netdata/netdata:stable
+    privileged: true
+    pid: "host"
+    container_name: netdata
+    hostname: netdata.molovestoshare.com # set to fqdn of host
+    ports:
+      - 19999:19999
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - netdata_config:/etc/netdata
+      - netdata_lib:/var/lib/netdata
+      - netdata_cache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+    environment:
+      - PGID=998
+      - NETDATA_CLAIM_TOKEN=7eJvVZzOwbJl7lBMOVh8TvJHzHjUR9xpcdhGNGM0-7VdzfCuqA3XJqp18fNTd8v_W0Sq6YR7BUn3T1B1hyVHXXxPw9XT5COAPY6W7mg5C_m3fU1RMd0Rk0W7pZRyC3JlnQ_X7iE
+      - NETDATA_CLAIM_URL=https://app.netdata.cloud
+      - NETDATA_CLAIM_ROOMS=
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-remote-write-receiver'
+      - '--web.enable-admin-api'
+      - '--web.enable-lifecycle' # To enable the Prometheus /-/reload HTTP endpoint - automatically reload your Prometheus config when it changes
+    restart: unless-stopped
+    links:
+      - ping:ping
+      - speedtest:speedtest
+    expose:
+      - 9090
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  grafana:
+    image: grafana/grafana:latest
+    env_file: configuration.env
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    links:
+      - influxdb
+    expose:
+      - 3000
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.1
+    container_name: cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      #- /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
+    restart: unless-stopped
+    expose:
+      - 8080
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  nodeexporter:
+    image: prom/node-exporter
+    container_name: nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+      # - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    expose:
+      - 9100
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: pushgateway
+    restart: unless-stopped
+    expose:
+      - 9091
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    restart: unless-stopped
+    expose:
+      - 9093
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+  caddy:
+    image: caddy:2.6.4
+    container_name: caddy
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+      - "9090:9090"
+      - "9080:9080"
+      - "9091:9091"
+      - "9100:9100"
+    volumes:
+      - ./caddy:/etc/caddy
+    environment:
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:-$2a$14$1l.IozJx7xQRVmlkEQ32OeEEfP5mRxTpbDTCTcXRqn19gXD8YK1pO}
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"

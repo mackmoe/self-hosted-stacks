@@ -1,0 +1,102 @@
+# Title: nextcloud-on-docker
+# Description: Nextcloud Server Lite
+# Icon URL: https://files.raycast.com/77wn9v4x21lqpth2pxwik1627t6d
+version: '3'
+# CMD Cheat Sheet for USS
+# Icon URL: https://nextcloud.com/wp-content/uploads/2022/11/Nextcloud-Hub-logo.png?original
+# Locations:
+#  php.ini, just run: php --ini 
+#  config.php - /var/www/html/config/config.php
+# Update locale for phone numbers with:
+#  docker exec --user www-data -it nextcloud php occ update:check
+# NC OCC CMDS:
+#  docker exec --user www-data -it app php occ libresign:configure:cfssl --help
+#  docker exec --user www-data -it nextcloud php occ config:system:set default_phone_region --value="US"
+# Run occ below generate metadata indices for existing photos, after activating the Memories app:configs:
+#  docker exec --user www-data -itnextcloud php occ memories:index
+# Run to attempt a repair:
+#  docker exec --user www-data -it nextcloud php occ files:scan --all
+#  docker exec --user www-data -it nextcloud php occ maintenance:repair
+# Run to update htaccess:
+#  docker exec --user www-data -it nextcloud php occ maintenance:update:htaccess
+#  docker exec -it nextcloud service apache2 reload
+# Find the use of all things NC, run: 
+#  docker exec --user www-data -it nextcloud php occ list
+volumes:
+  nc-redis: {}
+  nc-mariadb: {}
+
+services:
+  app:
+    build:
+      context: .
+      privileged: true
+      dockerfile_inline: |
+        FROM nextcloud:latest
+        RUN apt update -yq && apt install -yq libfilesys-smbclient-perl libsmbclient libsmbclient-dev smbclient && apt upgrade -yq
+    image: nextcloud:latest
+    container_name: nextcloud
+    domainname: nextcloud.molovestoshare.com
+    depends_on:
+      - db
+      - redis
+    ports:
+      - 50580:80
+      - 50443:443
+      - 3478/TCP
+      - 3478/UDP
+    volumes:
+      - /data/compose/uss/nextcloud:/var/www/html
+      - /data/compose/uss/apps:/var/www/html/custom_apps
+      - /data/compose/uss/config:/var/www/html/config
+      - /data/compose/uss/data:/var/www/html/data
+      - /data/compose/uss/theme:/var/www/html/themes
+      - /etc/localtime:/etc/localtime:ro
+    links:
+      - db:nextcloud
+    environment: #Auto configuration via environment variables - might need to be commented out after initial setup docs are https://hub.docker.com/_/nextcloud/
+      - MYSQL_ROOT_PASSWORD=ebfhkifzte
+      - MYSQL_PASSWORD=ebfhkifzte
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - NEXTCLOUD_ADMIN_USER=monash
+      - NEXTCLOUD_ADMIN_PASSWORD=ebfhkifzte
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.molovestoshare.com
+      - OVERWRITECLIURL=https://nextcloud.molovestoshare.com
+      - OVERWRITEPROTOCOL=https
+      - OVERWRITEHOST=nextcloud.molovestoshare.com
+      - REDIS_HOST=uss-redis
+      - REDIS_HOST_PASSWORD=ebfhkifzte
+      - REDIS_HOST_PORT=6379
+      - TRUSTED_PROXIES=173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 192.168.0.0/24 # cloud flare IPs
+      - NEXTCLOUD_INIT_HTACCESS=true
+    restart: unless-stopped
+  db:
+    image: mariadb:latest
+    container_name: db
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+    volumes:
+      - nc-mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=ebfhkifzte
+      - MYSQL_PASSWORD=ebfhkifzte
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+  redis:
+    image: redis:latest
+    container_name: uss-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ebfhkifzte
+    volumes:
+      - nc-redis:/data
+  webcron:
+    image: alpine-nc-curlbox:latest
+    pull_policy: build
+    container_name: nc-webcron
+    depends_on:
+      - app
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+  

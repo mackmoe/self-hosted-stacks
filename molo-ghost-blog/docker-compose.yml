@@ -1,0 +1,61 @@
+# Title: molovestoshare-on-ghost
+# Description: My Blog
+# Icon URL: https://fynydd.com/media/1515/ghost_logo_big.png?width=800&quality=80
+---
+networks:
+  net: {}
+services:
+  proxy:
+    image: nginx:latest
+    container_name: mologhost-proxy
+    networks:
+      - net
+    ports:
+      - ":80"
+      - ":443"
+    depends_on:
+      - ghost
+    volumes:
+      - $PWD/nginx/crt:/etc/ssl/certs/ghost.molovestoshare.com.crt:z
+      - $PWD/nginx/key:/etc/ssl/private/ghost.molovestoshare.com.key:z
+      - $PWD/nginx/ghost.conf:/etc/nginx/sites-enabled/ghost.conf:z
+  ghost:
+    image: ghost:latest
+    container_name: mologhost-blog
+    hostname: ghost
+    restart: always
+    networks:
+      - net
+    ports:
+      - "2368:2368"
+    depends_on:
+      - gdb
+    environment:
+      url: https://ghost.molovestoshare.com/
+      database__client: mysql
+      database__connection__host: mologhost-deebee
+      database__connection__user: "ghost"
+      database__connection__password: "ghostdbpass"
+      database__connection__database: "ghostdb"
+      database__connection__port: "3306"
+      comments: false
+    volumes:
+      - /data/compose/ghost/content:/var/lib/ghost/content
+  gdb:
+    image: mariadb:latest
+    container_name: mologhost-deebee
+    restart: always
+    command: "--max-allowed-packet=5242880"
+    environment:
+      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      MYSQL_USER: ghost
+      MYSQL_PASSWORD: ghostdbpass
+      MYSQL_DATABASE: ghostdb
+    networks:
+      - net
+    ports:
+      - ":3306"
+    expose:
+      - "3306"
+    volumes:
+      - /data/compose/ghost/mariadb:/var/lib/mysql

@@ -1,0 +1,37 @@
+# Title: beths-wordpress-blog
+# Description: Custom wordpress deployment
+# Icon URL: https://repository-images.githubusercontent.com/362790110/9dfc5f80-a912-11eb-944b-4574b84e1a69
+services:
+  db:
+    container_name: bethsblog-deebee
+    # We use a mariadb image which supports both amd64 & arm64 architecture
+    image: mariadb:latest
+    # If you really want to use MySQL, uncomment the following line
+    #image: mysql:8.0.27
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - /data/compose/wordpress/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=somewordpress
+      - MYSQL_DATABASE=bethsblog_db
+      - MYSQL_USER=bbdbusr
+      - MYSQL_PASSWORD=pwVPs2Y83Rusm6
+    expose:
+      - 3306
+      - 33060
+    restart: always
+  wordpress:
+    container_name: bethsblog-wp
+    domainname: bethsblog.molovestoshare.com
+    image: wordpress:latest
+    volumes:
+      - /data/compose/beths-wpblog/wordpress/data:/var/www/html
+    ports:
+      - 18206:80
+      - 39848:443
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=bbdbusr
+      - WORDPRESS_DB_PASSWORD=pwVPs2Y83Rusm6
+      - WORDPRESS_DB_NAME=bethsblog_db
+    restart: always

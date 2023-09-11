@@ -1,0 +1,25 @@
+version: '3'
+
+volumes:
+  portainer_data: {}
+  
+services:
+  portainer:
+    privileged: true
+    container_name: mgmt-stack-portainer
+    hostname: portainer
+    image: portainer/portainer-ee:latest
+    ports:
+      - 32772:9000
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+  watchtower:
+    privileged: true
+    container_name: mgmt-stack-watchtower
+    image: containrrr/watchtower
+    hostname: watchtower
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped

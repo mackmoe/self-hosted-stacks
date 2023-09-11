@@ -1,0 +1,20 @@
+# Title: homer
+# Description: MoLovesToShare Dashboard
+# IconURL: https://icons.iconarchive.com/icons/jonathan-rey/simpsons/256/Homer-Simpson-02-Donut-icon.png
+version: '3.9'
+services:
+  homer:
+    image: b4bz/homer:latest
+    container_name: homer
+    hostname: homer
+    environment:
+      - INIT_ASSETS=1 # default
+      - TZ=America/Chicago
+      - PORT=3380
+    volumes:
+      - /data/compose/homer:/www/assets
+    ports:
+      - 34250:3380
+    user: 1000:1000 # 1000 default
+    restart: always
+  

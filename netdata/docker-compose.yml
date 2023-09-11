@@ -1,0 +1,33 @@
+version: '3.8'
+volumes:
+    netdataconfig: {}
+    netdatalib: {}
+    netdatacache: {}
+services:
+  netdata:
+    privileged: true
+    cap_add:
+      - SYS_PTRACE
+    image: netdata/netdata:edge
+    container_name: netdata-agent
+    hostname: netdata
+    domainname: netdata.molovestoshare.com
+    volumes:
+      - /sys:/host/sys:ro
+      - /proc:/host/proc:ro
+      - /etc/group:/host/etc/group:ro
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - netdataconfig:/etc/netdata
+      - netdatalib:/var/lib/netdata
+      - netdatacache:/var/cache/netdata
+    command:
+      - '--security-opt apparmor=unconfined'
+    environment:
+      - NETDATA_CLAIM_URL=https://app.netdata.cloud
+      - NETDATA_CLAIM_TOKEN=uFbpxh7HBQewFbkxU7noefrCtzLHetQdpZA_03AQWb0aUXB6QMZmTuR1uXr4fnIWuv4cB_P145begmlICTATCTB2O5Q16JhM0shFpkyehyvZZU0s0vONZnrZBfZCnAQLn6IJn-A
+    restart: unless-stopped
+    expose:
+      - 19999:19999
+    labels:
+      org.label-schema.group: "monitoring"
