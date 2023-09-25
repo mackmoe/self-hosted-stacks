@@ -20,6 +20,6 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "20mb"
+        max-size: "50mb"
         max-file: "1"
     restart: always
