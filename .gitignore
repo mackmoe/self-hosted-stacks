@@ -28,3 +28,5 @@ my.cnf
 #ignored app stacks
 /arrr*
 /authelia*
+
+/home/monash/GitHub/self-hosted-stacks/monash-docker-workspace.code-workspace
