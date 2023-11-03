@@ -2,6 +2,10 @@
 # Description: HomeKit API for the Impatient
 # Icon URL: https://raw.githubusercontent.com/homebridge/branding/master/logos/homebridge-color-round-stylized.png
 version: '3.9'
+
+volumes:
+  homebridge_data: {}
+  
 services:
   homebridge:
     container_name: homebridge
@@ -14,7 +18,7 @@ services:
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /data/compose/homebridge:/homebridge
+      - homebridge_data:/homebridge
     ports:
       - 8581:8581
     logging:
