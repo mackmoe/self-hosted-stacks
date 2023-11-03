@@ -7,8 +7,8 @@ services:
     volumes:
       - uptime-kuma:/app/data
     ports:
-      - "3001:3001"  # <Host Port>:<Container Port>
+      - "3001:3001"
     restart: always
 
 volumes:
-  uptime-kuma:
+  uptime-kuma: {}
