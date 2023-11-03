@@ -14,4 +14,6 @@ services:
       - 9999:8888
     environment:
       - DOZZLE_ADDR=0.0.0.0:8888
+    labels:
+      org.label-schema.group: "monitoring"
     restart: unless-stopped
