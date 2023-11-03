@@ -4,7 +4,7 @@
 version: '3.9'
 
 volumes:
-  homebridge_data: {}
+  container_data: {}
   
 services:
   homebridge:
@@ -18,7 +18,7 @@ services:
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - homebridge_data:/homebridge
+      - container_data:/homebridge
     ports:
       - 8581:8581
     logging:
