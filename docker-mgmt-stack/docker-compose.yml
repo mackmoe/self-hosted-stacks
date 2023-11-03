@@ -15,6 +15,7 @@ services:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+  # original app template url: https://raw.githubusercontent.com/portainer/templates/master/templates-2.0.json
   watchtower:
     privileged: true
     container_name: mgmt-stack-watchtower
