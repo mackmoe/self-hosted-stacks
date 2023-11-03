@@ -14,6 +14,12 @@ services:
       - 9999:8888
     environment:
       - DOZZLE_ADDR=0.0.0.0:8888
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
     labels:
       org.label-schema.group: "monitoring"
     restart: unless-stopped
