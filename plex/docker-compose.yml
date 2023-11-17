@@ -23,7 +23,7 @@ services:
       - TP_DOMAIN=themepark.molovestoshare.com
       - TP_THEME=overseerr
       - PLEX_CLAIM= # Generate new claim codes here: https://www.plex.tv/claim/
-      - ADVERTISE_IP="http://192.168.10.52:32400/" # dont forget to add '/web' to the url
+      - ADVERTISE_IP="http://192.168.50.34:32400/" # dont forget to add '/web' to the url
     volumes:
       - /tmp:/transcodes
       - /dev/dri:/dev/dri

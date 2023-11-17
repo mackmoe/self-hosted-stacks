@@ -3,6 +3,10 @@
 # Icon URL: https://docs.theme-park.dev/site_assets/logo.png
 ---
 version: '3.9'
+
+volumes:
+  ums-themepark: {}
+
 services:
   theme-park:
     image: gilbn/theme.park:latest
@@ -15,7 +19,7 @@ services:
       - TP_URLBASE=themepark.molovestoshare.com #optional
       - TP_DOMAIN=themepark.molovestoshare.com #optional
     volumes:
-      - /data/compose/ums-themepark:/config #optional
+      - ums-themepark:/config #optional
     ports:
       - 8980:80
       - 4943:443
