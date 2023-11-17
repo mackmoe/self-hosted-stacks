@@ -3,6 +3,10 @@
 # IconURL: https://play-lh.googleusercontent.com/F39M_Ce9OBW62qntNOq6jvUH3Nh0N-03eGNFFU14GAU-hCU0RlHBONYYBiS-0SY0kaY
 ---
 version: '3.9'
+
+volumes:
+  plex-ums: {}
+
 services:
   plex:
     image: linuxserver/plex:latest
@@ -27,13 +31,13 @@ services:
     volumes:
       - /tmp:/transcodes
       - /dev/dri:/dev/dri
-      - /data/compose/plex/config:/config
-      - /home/monash/Backup_Disk/Media/TV Shows:/TV Shows
-      - /home/monash/Backup_Disk/Media/Movies:/Movies
-      - /mnt/Virtual_Storage_Disk/MediaVault/TV Shows:/MV-TV Shows
-      - /mnt/Virtual_Storage_Disk/MediaVault/Movies:/MV-Movies
+      - plex-ums:/config
+      - /home/monash/th_stordsk/Media/tv-shows:/TH-TV_Shows
+      - /home/monash/th_stordsk/Media/movies:/TH-Movies
+      - /home/monash/tf_stordsk/Media/tv-shows:/TF-TV_Shows
+      - /home/monash/tf_stordsk/Media/movies:/TF-Movies
       
-    network_mode: host
+    #network_mode: host
     ports:
       - 32400:32400
       - :1900/udp
@@ -46,3 +50,6 @@ services:
       - :32413/udp
       - :32414/udp
     restart: unless-stopped
+    deploy:
+      labels:
+        com.example.description: "ums"
