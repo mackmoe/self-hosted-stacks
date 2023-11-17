@@ -24,3 +24,6 @@ services:
       - 8980:80
       - 4943:443
     restart: unless-stopped
+    deploy:
+      labels:
+        com.example.description: "ums"
