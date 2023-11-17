@@ -1,0 +1,6 @@
+# Title: traefik
+# Desc: Traefik is the leading open-source reverse proxy and load balancer for HTTP and TCP-based applications that is easy, dynamic and full-featured.
+# Icon URL: https://raw.githubusercontent.com/docker-library/docs/a6cc2c5f4bc6658168f2a0abbb0307acaefff80e/traefik/logo.png
+# EZ Setup How-To: https://www.smarthomebeginner.com/traefik-2-docker-tutorial/
+---
+version: '3.9'

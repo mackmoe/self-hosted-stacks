@@ -5,39 +5,37 @@
 version: '3.9'
 
 volumes:
-  plex-ums: {}
+  plex_data: {}
 
 services:
   plex:
-    image: linuxserver/plex:latest
-    container_name: plex
+    privileged: true
+    image: linuxserver/plex
+    container_name: ums-plex
     hostname: ums-plex
     domainname: plex.molovestoshare.com
-    privileged: true
     cap_add:
       - DAC_READ_SEARCH
       - SYS_ADMIN
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PLEX_UID=${PUID:-1000}
+      - PLEX_GID=${GUID:-1000}
       - VERSION=docker
       - TZ="America/Chicago"
       - runtime=nvidia
       - DOCKER_MODS=ghcr.io/gilbn/theme.park:plex
       - TP_DOMAIN=themepark.molovestoshare.com
       - TP_THEME=overseerr
-      - PLEX_CLAIM= # Generate new claim codes here: https://www.plex.tv/claim/
-      - ADVERTISE_IP="http://192.168.50.34:32400/" # dont forget to add '/web' to the url
+      # - PLEX_CLAIM= # Generate new claim codes here: https://www.plex.tv/claim/
+      # - ADVERTISE_IP= # dont forget to add '/web' to the url
     volumes:
       - /tmp:/transcodes
-      - /dev/dri:/dev/dri
-      - plex-ums:/config
-      - /home/monash/th_stordsk/Media/tv-shows:/TH-TV_Shows
-      - /home/monash/th_stordsk/Media/movies:/TH-Movies
-      - /home/monash/tf_stordsk/Media/tv-shows:/TF-TV_Shows
-      - /home/monash/tf_stordsk/Media/movies:/TF-Movies
-      
-    #network_mode: host
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/dri/card0:/dev/dri/card0
+      - plex_data:/config
+      - /mnt/tf_nfsdisk/Media/tv-shows:/TV Shows
+      - /mnt/tf_nfsdisk/Media/movies:/Movies
+    network_mode: host
     ports:
       - 32400:32400
       - :1900/udp
@@ -50,6 +48,12 @@ services:
       - :32413/udp
       - :32414/udp
     restart: unless-stopped
+    pull_policy: build
     deploy:
       labels:
-        com.example.description: "ums"
+        # traefik.enable: "false"
+        # traefik.port: "32400"
+        # traefik.frontend.rule: "Host:plex.molovestoshare.com"
+        # traefik.backend: plex
+        com.centurylinklabs.watchtower.enable: "true"
+        org.label-schema.group: "ums-svcs"

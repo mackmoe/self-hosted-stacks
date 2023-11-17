@@ -1,21 +1,6 @@
 version: '3'
 
-volumes:
-  portainer_data: {}
-  
 services:
-  portainer:
-    privileged: true
-    container_name: mgmt-stack-portainer
-    hostname: portainer
-    image: portainer/portainer-ee:latest
-    ports:
-      - 32772:9000
-    volumes:
-      - portainer_data:/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-  # original app template url: https://raw.githubusercontent.com/portainer/templates/master/templates-2.0.json
   watchtower:
     privileged: true
     container_name: mgmt-stack-watchtower
@@ -23,4 +8,30 @@ services:
     hostname: watchtower
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      org.label-schema.group: "stack-mgmt"
     restart: unless-stopped
+
+  dozzle:
+    container_name: mgmt-stack-dozzle
+    hostname: dozzle
+    image: amir20/dozzle:latest
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9999:8888
+    environment:
+      - DOZZLE_ADDR=0.0.0.0:8888
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    labels:
+      org.label-schema.group: "stack-mgmt"
+    restart: unless-stopped
+
+volumes:
+  portainer_data: {}

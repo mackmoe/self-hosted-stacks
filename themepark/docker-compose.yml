@@ -10,7 +10,7 @@ volumes:
 services:
   theme-park:
     image: gilbn/theme.park:latest
-    container_name: theme-park
+    container_name: ums-themepark
     hostname: ums-themepark
     environment:
       - PUID=1000
@@ -24,6 +24,7 @@ services:
       - 8980:80
       - 4943:443
     restart: unless-stopped
+    pull_policy: build
     deploy:
       labels:
-        com.example.description: "ums"
+        com.example.description: "ums-svcs"

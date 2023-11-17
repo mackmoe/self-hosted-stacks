@@ -1,0 +1,61 @@
+# Title: ums-proxy-stack
+# Description: Bittorrent client behind Wireguard Proxy via Mullvad VPN for the Ultimate Media Stack
+# Icon URL: https://upload.wikimedia.org/wikipedia/commons/a/ae/The_Hydra_Bay_logo.png
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard
+    privileged: true
+    container_name: ums-wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - SERVERURL=ums-proxy.molovestoshare.com
+    volumes:
+      - /mnt/docker/volumes/wireguard-client:/config
+      - /lib/modules:/lib/modules
+    ports:
+    - 8112:8112
+    - 6881:6881
+    - 51820:51820
+    networks:
+      default:
+        ipv4_address: 172.30.0.10
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+    pull_policy: build
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      org.label-schema.group: "ums-stack"
+  deluge:
+    privileged: true
+    image: lscr.io/linuxserver/deluge
+    container_name: ums-deluge
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - DOCKER_MODS=ghcr.io/themepark-dev/theme.park:deluge
+      - TP_THEME=overseerr
+      - TP_DOMAIN=themepark.molovestoshare.com
+    volumes:
+      - deluge_data:/config
+      - /mnt/tf_nfsdisk/Media/downloads:/downloads
+    network_mode: service:wireguard
+    restart: unless-stopped
+    pull_policy: build
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      org.label-schema.group: "ums-stack"
+
+volumes:
+  deluge_data: {}  
+
+networks:
+  default:
+    name: proxynet
+    external: true

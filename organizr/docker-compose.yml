@@ -42,4 +42,7 @@ services:
         options:
             max-file: "10"
             max-size: "20M"
+    pull_policy: build
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"

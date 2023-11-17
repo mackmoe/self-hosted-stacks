@@ -1,13 +1,7 @@
 name: portainer
 services:
   portainer:
-    cpu_shares: 90
-    command: []
     container_name: mgmt-stack-portainer
-    deploy:
-      resources:
-        limits:
-          memory: 3790M
     hostname: portainer
     image: portainer/portainer-ee:latest
     ports:
@@ -15,9 +9,7 @@ services:
         target: 9000
         published: "32772"
         protocol: tcp
-    privileged: true
     restart: always
-    pull_policy: build
     volumes:
       - type: bind
         source: /data/compose/portainer
@@ -31,19 +23,28 @@ services:
           create_host_path: true
     devices: []
     cap_add: []
+    command: []
     environment: []
     networks:
       - portainer
+    privileged: true
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 3790M
 networks:
+  default:
+    name: portainer_default
   portainer:
     name: portainer
 x-casaos:
+  hostname: portainer.molovestoshare.com
+  scheme: http
+  index: /
+  port_map: "32772"
   author: self
   category: self
-  hostname: portainer.molovestoshare.com
   icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
-  index: /
-  port_map: ""
-  scheme: http
   title:
     custom: Portainer Docker UI

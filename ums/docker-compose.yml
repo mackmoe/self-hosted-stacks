@@ -1,0 +1,102 @@
+# Title: ums-svc-stack
+# Description: Front/Back End Services for the Ultimate Media Stack (ums) 
+# Icon URL: https://lemmy.dbzer0.com/pictrs/image/1a80c58c-a63f-4970-a45a-93bd13941863.png
+version: "3"
+
+volumes:
+  radarr_data: {}
+  sonarr_data: {}
+  prowlarr_data: {}
+
+networks:
+  proxynet:
+    external: true
+
+services:
+  radarr:
+    image: linuxserver/radarr
+    domainname: radarr.molovestoshare.com
+    container_name: ums-radarr
+    restart: unless-stopped
+    environment:
+      # - UMASK_SET=022
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - DOCKER_MODS=ghcr.io/themepark-dev/theme.park:radarr
+      - TP_THEME=overseerr
+      - TP_DOMAIN=themepark.molovestoshare.com
+    volumes:
+      - /mnt/tf_nfsdisk/Media/movies:/movies
+      - /mnt/tf_nfsdisk/Media/downloads:/downloads
+      - radarr_data:/config
+    networks:
+      - default
+      - proxynet
+    ports:
+      - 7878:7878/tcp # The port for the Radarr webinterface
+    pull_policy: build
+    labels:
+      org.label-schema.group: "ums-stack"
+  sonarr:
+    image: linuxserver/sonarr
+    domainname: sonarr.molovestoshare.com
+    container_name: ums-sonarr
+    restart: unless-stopped
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - DOCKER_MODS=ghcr.io/themepark-dev/theme.park:sonarr
+      - TP_THEME=overseerr
+      - TP_DOMAIN=themepark.molovestoshare.com
+    volumes:
+      - sonarr_data:/config
+      - /mnt/tf_nfsdisk/Media/tv-shows:/tv
+      - /mnt/tf_nfsdisk/Media/downloads:/downloads
+    networks:
+      - default
+      - proxynet
+    ports:
+      - 8989:8989/tcp # Web UI
+    pull_policy: build
+    labels:
+      org.label-schema.group: "ums-stack"
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr
+    container_name: ums-prowlarr
+    domainname: prowlarr.molovestoshare.com
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - TP_THEME=overseerr
+      - DOCKER_MODS=ghcr.io/themepark-dev/theme.park:prowlarr
+      - TP_DOMAIN=themepark.molovestoshare.com
+    volumes:
+      - prowlarr_data:/config
+    networks:
+      - default
+      - proxynet
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+    pull_policy: build
+    labels:
+      org.label-schema.group: "ums-stack"
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr
+    container_name: ums-flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=America/Chicago
+    networks:
+      - default
+    ports:
+      - "${PORT:-8191}:8191"
+    restart: unless-stopped
+    pull_policy: build
+    labels:
+      org.label-schema.group: "ums-stack"

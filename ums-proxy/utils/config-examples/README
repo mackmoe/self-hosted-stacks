@@ -1,0 +1,17 @@
+# Purpose
+The reason this is here is to point the examples to the actual file paths, as follows:
+
+- default-wg0.conf -->  /mnt/docker-volumes/wireguard-client/wg_confs/wg0.conf
+- templates_server -->  /mnt/docker-volumes/wireguard-client/templates/server.conf
+- wg_failover.sh   -->  /mnt/docker-volumes/wireguard-client/wg_confs/wg_failover.sh
+
+# Headless Examples
+docker exec ums-deluge ip route show
+default via 172.30.0.1 dev eth0 
+172.30.0.0/24 dev eth0 scope link  src 172.30.0.2 
+λ titainium-feet ums-proxy → λ git main → docker exec ums-deluge curl -s https://am.i.mullvad.net/connected
+You are not connected to Mullvad. Your IP address is 72.180.100.141
+λ titainium-feet ums-proxy → λ git main → docker exec --privileged ums-deluge ip route del default
+λ titainium-feet ums-proxy → λ git main → docker exec --privileged ums-deluge ip route add default via 172.30.0.10
+λ titainium-feet ums-proxy → λ git main → docker exec ums-deluge curl -s https://am.i.mullvad.net/connected
+You are connected to Mullvad (server us-atl-wg-002). Your IP address is 45.134.140.149

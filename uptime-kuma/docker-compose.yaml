@@ -1,3 +1,6 @@
+# Title: uptime-kuma
+# Description: A fancy self-hosted monitoring tool
+# IconURL: https://github.com/louislam/uptime-kuma/raw/master/public/icon.svg
 version: '3.8'
 
 services:
@@ -5,11 +8,14 @@ services:
     image: louislam/uptime-kuma
     container_name: uptime-kuma
     volumes:
-      - uptime-kuma:/app/data
+      - uptime-kuma_data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "3001:3001"
       - "3307:3306"
     restart: always
+    labels:
+      org.label-schema.group: "monitoring"
 
 volumes:
-  uptime-kuma: {}
+  uptime-kuma_data: {}
