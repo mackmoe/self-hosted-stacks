@@ -7,6 +7,11 @@ version: '3.9'
 volumes:
   plex_data: {}
 
+networks:
+  default:
+    name: macvlan_wlan0
+    external: true
+
 services:
   plex:
     privileged: true
@@ -37,16 +42,16 @@ services:
       - /mnt/tf_nfsdisk/Media/movies:/Movies
     network_mode: host
     ports:
-      - 192.168.50.238:32400:32400
-      - 192.168.50.238::1900/udp
-      - 192.168.50.238::3005
-      - 192.168.50.238::5353/udp
-      - 192.168.50.238::8324
-      - 192.168.50.238::32469
-      - 192.168.50.238::32410/udp
-      - 192.168.50.238::32412/udp
-      - 192.168.50.238::32413/udp
-      - 192.168.50.238::32414/udp
+      - 32400:32400
+      - :1900/udp
+      - :3005
+      - :5353/udp
+      - :8324
+      - :32469
+      - :32410/udp
+      - :32412/udp
+      - :32413/udp
+      - :32414/udp
     restart: unless-stopped
     pull_policy: build
     deploy:

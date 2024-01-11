@@ -1,11 +1,18 @@
 # Title: homebridge-on-docker
 # Description: HomeKit API for the Impatient
 # Icon URL: https://raw.githubusercontent.com/homebridge/branding/master/logos/homebridge-color-round-stylized.png
+# NOTES: OS networking needs to have the macvlan sysmodule enabled: sudo modprobe macvlan && sudo lsmod | grep macvlan
+# NOTES: create macvlan docker network: docker network create -d macvlan --subnet 192.168.50.0/24 --gateway 192.168.50.1 -o parent=enp66s0 -o macvlan_mode=bridge macvlan_eth0
 version: '2'
 
 volumes:
   homebridge_data: {}
   
+networks:
+  default:
+    name: macvlan_eth0
+    external: true
+
 services:
   homebridge:
     privileged: true
@@ -18,7 +25,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - homebridge_data:/homebridge
-    network_mode: host
+    networks:
+      - default
     ports:
       - 8581:8581
     logging:
