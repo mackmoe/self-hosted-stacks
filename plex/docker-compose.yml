@@ -1,16 +1,13 @@
 # Title:
 # Description: Plex Media Server
 # IconURL: https://play-lh.googleusercontent.com/F39M_Ce9OBW62qntNOq6jvUH3Nh0N-03eGNFFU14GAU-hCU0RlHBONYYBiS-0SY0kaY
+# NOTES: OS networking needs to have the macvlan sysmodule enabled: sudo modprobe macvlan && sudo lsmod | grep macvlan
+# NOTES: create macvlan docker network: docker network create -d macvlan --subnet 172.19.0.0/16 --gateway 172.19.0.1 --ip-range 172.19.0.10/28 --aux-address 'host=172.19.0.10' -o parent=wlan0 -o macvlan_mode=bridge macvlan_wlan0
 ---
 version: '3.9'
 
 volumes:
   plex_data: {}
-
-networks:
-  default:
-    name: macvlan_wlan0
-    external: true
 
 services:
   plex:
@@ -42,16 +39,16 @@ services:
       - /mnt/tf_nfsdisk/Media/movies:/Movies
     network_mode: host
     ports:
-      - 32400:32400
-      - :1900/udp
-      - :3005
-      - :5353/udp
-      - :8324
-      - :32469
-      - :32410/udp
-      - :32412/udp
-      - :32413/udp
-      - :32414/udp
+      - 192.168.50.238:32400:32400
+      - 192.168.50.238::1900/udp
+      - 192.168.50.238::3005
+      - 192.168.50.238::5353/udp
+      - 192.168.50.238::8324
+      - 192.168.50.238::32469
+      - 192.168.50.238::32410/udp
+      - 192.168.50.238::32412/udp
+      - 192.168.50.238::32413/udp
+      - 192.168.50.238::32414/udp
     restart: unless-stopped
     pull_policy: build
     deploy:
@@ -62,20 +59,3 @@ services:
         # traefik.backend: plex
         com.centurylinklabs.watchtower.enable: "true"
         org.label-schema.group: "ums-svcs"
-
-
-# networks:
-#   fast_net:
-#     attachable: true
-#     driver: macvlan
-#     driver_opts:
-#       parent: wlan0  #target interface
-#     ipam:
-#       config:
-#         - subnet: 192.168.0.0/16 # change this
-#           ip_range: 192.168.0.0/24
-#           # aux_addresses:   # Auxiliary IPv4 or IPv6 addresses used by Network driver, as a mapping from hostname to IP
-#             # host1: 192.168.0.10
-#     external: true
-#     labels:
-#       com.label-schema.group: "ums-svcs"
