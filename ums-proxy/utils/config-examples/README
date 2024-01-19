@@ -1,3 +1,6 @@
+# NOTE
+How-To guide for step by step instructions: https://www.linuxserver.io/blog/routing-docker-host-and-container-traffic-through-wireguard
+
 # Purpose
 The reason this is here is to point the examples to the actual file paths, as follows:
 
@@ -6,6 +9,7 @@ The reason this is here is to point the examples to the actual file paths, as fo
 - wg_failover.sh   -->  /mnt/docker-volumes/wireguard-client/wg_confs/wg_failover.sh
 
 # Headless Examples
+sudo iptables -t nat -A POSTROUTING -o wg0 -j MASQUERADE <<-- Money maker!
 docker exec ums-deluge ip route show
 default via 172.30.0.1 dev eth0 
 172.30.0.0/24 dev eth0 scope link  src 172.30.0.2 

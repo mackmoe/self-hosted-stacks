@@ -15,7 +15,7 @@ services:
       - TZ=America/Chicago
       - SERVERURL=ums-proxy.molovestoshare.com
     volumes:
-      - /mnt/docker/volumes/wireguard-client:/config
+      - /mnt/docker/volumes/wireguard/wireguard-client:/config
       - /lib/modules:/lib/modules
     ports:
     - 8112:8112
@@ -23,11 +23,10 @@ services:
     - 51820:51820
     networks:
       default:
-        ipv4_address: 172.30.0.10
+        ipv4_address: 172.20.0.50
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
-    restart: unless-stopped
-    pull_policy: build
+    restart: unless-stopped   
     labels:
       com.centurylinklabs.watchtower.enable: "true"
       org.label-schema.group: "ums-stack"
@@ -47,7 +46,6 @@ services:
       - /mnt/tf_nfsdisk/Media/downloads:/downloads
     network_mode: service:wireguard
     restart: unless-stopped
-    pull_policy: build
     labels:
       com.centurylinklabs.watchtower.enable: "true"
       org.label-schema.group: "ums-stack"
