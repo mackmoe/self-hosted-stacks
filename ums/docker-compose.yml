@@ -15,6 +15,7 @@ networks:
 services:
   radarr:
     image: linuxserver/radarr
+    privileged: true
     domainname: radarr.molovestoshare.com
     container_name: ums-radarr
     restart: unless-stopped
@@ -39,6 +40,7 @@ services:
       org.label-schema.group: "ums-stack"
   sonarr:
     image: linuxserver/sonarr
+    privileged: true
     domainname: sonarr.molovestoshare.com
     container_name: ums-sonarr
     restart: unless-stopped
@@ -62,6 +64,7 @@ services:
       org.label-schema.group: "ums-stack"
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
+    privileged: true
     container_name: ums-prowlarr
     domainname: prowlarr.molovestoshare.com
     environment:
