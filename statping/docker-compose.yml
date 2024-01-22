@@ -1,35 +1,52 @@
-# Title: statping
-# Desc: Statping - Web and App Status Monitoring for Any Type of Project
-# Icon URL: https://s3-us-west-2.amazonaws.com/gitimgs/statping.png
----
-version: '2.3'
-
-volumes:
-  statping_data:
-
+name: statping
 services:
   statping:
+    cpu_shares: 90
+    command: []
     container_name: statping
-    image: statping/statping
+    deploy:
+      resources:
+        limits:
+          memory: 3790M
+    environment:
+      - ADMIN_EMAIL=monash@mystatping.com
+      - ADMIN_PASSWORD=~Z0vJE8Q_S4wezp6r@)u>9:52N/T\lM1
+      - ADMIN_USER=monash
+      - API_SECRET=~Z0vJE8Q_S4wezp6r@)u>9:52N/T\lM1
+      - DESCRIPTION=Self-Hosted Application Health Monitoring
+      - DOMAIN=https://appstatus.molovestoshare.com
+      - NAME=StatPing App Monitoring
+    hostname: statping
+    image: statping/statping:latest
+    ports:
+      - mode: ingress
+        target: 8080
+        published: "8080"
+        protocol: tcp
+    privileged: true
     restart: always
     volumes:
-      - statping_data:/app
-    environment:
-      - ADMIN_USER=${ADMIN_USER}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - AUTH_USERNAME=${AUTH_USERNAME}
-      - AUTH_PASSWORD=${AUTH_PASSWORD}
-      - DB_CONN=${DB_CONN}
-      - API_SECRET=${ADMIN_PASSWORD}
-      - USE_CDN=${USE_CDN}
-      - USE_ASSETS=${USE_ASSETS}
-      - IS_DOCKER=${IS_DOCKER}
-      - IS_AWS=${IS_AWS}
-      - SASS=${SASS}
-      - CMD_FILE=${CMD_FILE}
-    ports:
-      - 8080:8080
-    deploy:
-      labels:
-        com.example.description: "monitoring"
+      - type: volume
+        target: /app
+      - type: bind
+        source: /home/ubuntu/Git/self-hosted-stacks/statping/utils/services.yml
+        target: /app/services.yml
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    networks:
+      - default
+networks:
+  default:
+    name: statping_default
+x-casaos:
+  author: self
+  category: self
+  hostname: appstatus.molovestoshare.com
+  icon: https://avatars.githubusercontent.com/u/88886654?v=4
+  index: /
+  port_map: ""
+  scheme: http
+  title:
+    custom: StatPing Monitoring

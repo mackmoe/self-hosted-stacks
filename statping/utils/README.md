@@ -5,8 +5,7 @@ You can import multiple services when Statping first loads by creating a file na
 With Yaml, you can insert "anchors" to make receptive fields simple! Checkout the example below. The &tcpservice anchor will return all the fields belonging to x-tcpservice:. To reuse these fields for each service, you can insert <<: *tcpservice and thats it!
 
 # Config with .env File
-Danial Habibi edited this page on Oct 10, 2019 · 10 revisions
-It may be useful to load your environment using a .env file in the root directory of your Statping server. The .env file will be automatically loaded on startup and will overwrite all values you have in config.yml.
+Just copy or symlink the file to compose environment as `.env`. It may be useful to load your environment using a .env file in the root directory of your Statping server. The .env file will be automatically loaded on startup and will overwrite all values you have in config.yml.
 
 If you have the DB_CONN environment variable set Statping will bypass all values in config.yml and will require you to have the other DB_* variables in place. You can pass in these environment variables without requiring a .env file.
 

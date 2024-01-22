@@ -1,37 +1,59 @@
-version: '3'
-
+name: portainer
 services:
   watchtower:
-    privileged: true
+    command: []
     container_name: mgmt-stack-watchtower
-    image: containrrr/watchtower
-    hostname: watchtower
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    labels:
-      org.label-schema.group: "stack-mgmt"
-    restart: unless-stopped
-
-  dozzle:
-    container_name: mgmt-stack-dozzle
-    hostname: dozzle
-    image: amir20/dozzle:latest
     privileged: true
+    image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 9999:8888
-    environment:
-      - DOZZLE_ADDR=0.0.0.0:8888
-    healthcheck:
-      test: ["CMD", "/dozzle", "healthcheck"]
-      interval: 3s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
-    labels:
-      org.label-schema.group: "stack-mgmt"
     restart: unless-stopped
-
-volumes:
-  portainer_data: {}
+    labels:
+      org.label-schema.group: "mgmt-ui"
+  portainer:
+    command: []
+    container_name: mgmt-stack-portainer
+    deploy:
+      resources:
+        limits:
+          memory: 3790M
+    hostname: portainer
+    image: portainer/portainer-ee:latest
+    ports:
+      - mode: ingress
+        target: 9000
+        published: "32772"
+        protocol: tcp
+    privileged: true
+    restart: always
+    volumes:
+      - type: bind
+        source: /data/compose/portainer
+        target: /data
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    environment: []
+    networks:
+      - portainer
+    labels:
+      org.label-schema.group: "mgmt-ui"
+networks:
+  portainer:
+    name: portainer
+x-casaos:
+  author: self
+  category: self
+  hostname: portainer.molovestoshare.com
+  icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
+  index: /
+  port_map: ""
+  scheme: http
+  title:
+    custom: Portainer Docker UI

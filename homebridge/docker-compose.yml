@@ -1,10 +1,7 @@
 # Title: homebridge-on-docker
 # Description: HomeKit API for the Impatient
 # Icon URL: https://raw.githubusercontent.com/homebridge/branding/master/logos/homebridge-color-round-stylized.png
-# NOTES: OS networking needs to have the macvlan sysmodule enabled: sudo modprobe macvlan && sudo lsmod | grep macvlan
-# NOTES: create macvlan docker network: docker network create -d macvlan --subnet 172.29.0.0/16 --gateway 172.29.0.1 --ip-range 172.29.0.10/28 --aux-address 'host=172.29.0.10' -o parent=enp66s0 -o macvlan_mode=bridge macvlan_eth0
-# NOTES: To allow communication between the Docker containers and the default gateway:  sudo ip link set dev <dev-name> promisc on
-# NOTES: one last problem: sudo ip link add macvlan_int link enp0s3 type macvlan mode bridge
+# NOTES: container missing bluez-hcidump pkg
 
 version: '2'
 
@@ -13,15 +10,16 @@ volumes:
 
 services:
   homebridge:
+    build:
+      context: .
+      dockerfile: /home/monash/Git/self-hosted-stacks/homebridge/Dockerfile
     privileged: true
     container_name: homebridge
     domainname: homebridge.molovestoshare.com
-    image: oznu/homebridge
-    cap_add:
-      - NET_ADMIN
-      - SYS_ADMIN
+    image: oznu/homebridge #homebridge/homebridge #oznu/homebridge
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - /dev/bus/usb:/dev/bus/usb
       - homebridge_data:/homebridge
     network_mode: host
     ports:
@@ -32,6 +30,5 @@ services:
         max-size: "50mb"
         max-file: "1"
     restart: always
-    pull_policy: build
     labels:
       org.label-schema.group: "automation"

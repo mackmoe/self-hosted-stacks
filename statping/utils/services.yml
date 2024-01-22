@@ -23,34 +23,35 @@ x-httpservice: &httpservice
 services:
 
   - name: Portainer Container Management
-    domain: portainer
-    port: 32772
+    domain: 192.168.50.193
+    port: 2376
     <<: *tcpservice
 
   - name: Statping Health Monitoring
-    domain: https://statping.molovestoshare.com
+    domain: https://appstatus.molovestoshare.com
     <<: *httpservice
 
   - name: Homebridge - Home Automation
     domain: https://homebridge.molovestoshare.com
     <<: *httpservice
 
-  - name: Self Hosted Plex
-    domain: https://plex.molovestoshare.com
-    <<: *httpservice
+  - name: Plex - Media Server
+    domain:  https://plex.molovestoshare.com/web/index.html
+    port: 32400
+    <<: *tcpservice
 
   - name: Deluge - Ultimate Media Stack
     domain: https://ums-proxy.molovestoshare.com
     <<: *httpservice
 
-  - name: Prowlarr - Ultimate Media Stack
+  - name: Prowlarr - Ultimate Media Stack Indexer
     domain: https://prowlarr.molovestoshare.com
     <<: *httpservice
 
-  - name: Sonarr - Ultimate Media Stack
+  - name: Sonarr - Ultimate Media Stack TV Show Manager
     domain: https://sonarr.molovestoshare.com
     <<: *httpservice
 
-  - name: Radarr - Ultimate Media Stack
+  - name: Radarr - Ultimate Media Stack Movie Manager
     domain: https://radarr.molovestoshare.com
     <<: *httpservice

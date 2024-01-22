@@ -1,27 +1,18 @@
-LANGUAGE=en
+NAME="StatPing App Monitoring"
+DESCRIPTION="Self-Hosted Application Health Monitoring"
+DOMAIN="https://appstatus.molovestoshare.com"
 
-NAME=StatPing App Monitoring
-DESCRIPTION=Self-Hosted Application Health Monitoring
-DOMAIN=https://appstatus.molovestoshare.com
-
-ADMIN_USER=admin
-ADMIN_PASSWORD=admmin
-ADMIN_EMAIL=info@admin.com
-AUTH_USERNAME=${ADMIN_USER:-default}
+ADMIN_USER=monash
+ADMIN_PASSWORD="~Z0vJE8Q_S4wezp6r@)u>9:52N/T\lM1"
+ADMIN_EMAIL=monash@mystatping.com
+AUTH_USERNAME=monash
 AUTH_PASSWORD=${ADMIN_PASSWORD:-default}
+API_SECRET=${ADMIN_PASSWORD:-default}
 
-DB_CONN=sqlite
-DB_HOST=0.0.0.0
+DB_CONN=postgres
+DB_HOST=${DB_CONN:-default}
+DB_USER=statping
+DB_NAME=${DB_USER:-default}
+DB_PASS="iGqcKm6UO8lQsAZ3"
 
 USE_CDN=true
-USE_ASSETS=true
-DISABLE_HTTP=false
-
-API_SECRET=${ADMIN_PASSWORD:-default}
-DISABLE_COLORS=false
-DISABLE_LOGS=false
-
-IS_DOCKER=true
-IS_AWS=false
-SASS=/usr/local/bin/sass
-CMD_FILE=/bin/bash

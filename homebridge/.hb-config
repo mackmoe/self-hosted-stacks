@@ -44,12 +44,12 @@
             "name": "Alexa",
             "username": "monash",
             "password": "power999",
-            "pin": "182-84-660",
-            "refresh": 900,
-            "keepalive": 5,
-            "CloudTransport": "mqtts",
-            "deviceListHandling": "none",
-            "platform": "Alexa"
+            "platform": "Alexa",
+            "pin": "657-00-374",
+            "routines": false,
+            "deviceListHandling": "allow",
+            "CloudTransport": "mqtts", // MQTT - this is the original/legacy option. WSS - this is the an alternative transport option.
+            // "debug": true
         },
         {
             "name": "TplinkSmarthome",

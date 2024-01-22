@@ -1,0 +1,125 @@
+{
+    "bridge": {
+        "name": "FK Homebridge",
+        "username": "0E:39:7C:D3:14:A9",
+        "port": 51414,
+        "pin": "657-00-374",
+        "advertiser": "bonjour-hap"
+    },
+    "accessories": [],
+    "platforms": [
+        {
+            "name": "Config",
+            "port": 8581,
+            "platform": "config"
+        },
+        {
+            "name": "TplinkSmarthome",
+            "addCustomCharacteristics": true,
+            "deviceTypes": [
+                "plug",
+                "bulb"
+            ],
+            "platform": "TplinkSmarthome"
+        },
+        {
+            "name": "Blink",
+            "username": "maurice.nash1@gmail.com",
+            "password": "Power999!",
+            "pin": 120721,
+            "disable-thumbnail-refresh": false,
+            "enable-startup-diagnostic": false,
+            "platform": "Blink"
+        },
+        {
+            "name": "Govee",
+            "username": "maurice.nash1@gmail.com",
+            "password": "6vN&G44$&tb",
+            "platform": "Govee"
+        },
+        {
+            "port": 8182,
+            "channels": [
+                {
+                    "name": "HomeScreen",
+                    "number": 27
+                }
+            ],
+            "keys": [
+                {
+                    "name": "Power",
+                    "key": "KEYCODE_POWER"
+                }
+            ],
+            "applications": [
+                {
+                    "name": "Netflix",
+                    "link": "https://www.netflix.com/title.*"
+                }
+            ],
+            "_bridge": {
+                "username": "0E:85:21:7D:1D:1E",
+                "port": 44599
+            },
+            "platform": "HomebridgeAndroidTV"
+        },
+        {
+            "username": "maurice.nash1@gmail.com",
+            "password": "%W4r8FC9H^kbB8Pk",
+            "country": "US",
+            "deviceName": "eHB PITAv3",
+            "platform": "EufySecurity",
+            "ignoreStations": [],
+            "ignoreDevices": [],
+            "cleanCache": true
+        },
+        {
+            "devices": [
+                {
+                    "name": "Bedroom TV",
+                    "ip": "192.168.50.152",
+                    "mac": "24:FC:E5:9A:88:38",
+                    "inputs": [
+                        {
+                            "type": "app"
+                        }
+                    ]
+                }
+            ],
+            "platform": "SamsungTizen"
+        },
+        {
+            "devices": [
+                "Master Bedroom",
+                "Garage Switch"
+            ],
+            "auth": {
+                "refreshInterval": 4,
+                "proxy": {
+                    "clientHost": "192.168.50.239",
+                    "port": 9000
+                }
+            },
+            "amazonDomain": "amazon.com",
+            "language": "en-US",
+            "performance": {
+                "cacheTTL": 300,
+                "backgroundRefresh": true
+            },
+            "debug": true,
+            "platform": "HomebridgeAlexaSmartHome"
+        },
+        {
+            "name": "Alexa",
+            "username": "monash",
+            "password": "power999",
+            "pin": "657-00-374",
+            "refresh": 900,
+            "keepalive": 5,
+            "CloudTransport": "mqtts",
+            "deviceListHandling": "none",
+            "platform": "Alexa"
+        }
+    ],
+    "disabledPlugins": []
+}

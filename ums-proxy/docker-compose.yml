@@ -39,8 +39,10 @@ services:
       - PGID=1000
       - TZ=America/Chicago
       - DOCKER_MODS=ghcr.io/themepark-dev/theme.park:deluge
-      - TP_THEME=overseerr
-      - TP_DOMAIN=themepark.molovestoshare.com
+      - TP_COMMUNITY_THEME=true
+      - TP_THEME=onedark
+      # - TP_THEME=overseerr
+      # - TP_DOMAIN=themepark.molovestoshare.com
     volumes:
       - deluge_data:/config
       - /mnt/tf_nfsdisk/Media/downloads:/downloads
