@@ -1,0 +1,21 @@
+DB_CONN=postgres
+DB_HOST=0.0.0.0
+DB_PORT=5432
+DB_USER=root
+DB_PASS=password123
+DB_DATABASE=root
+
+NAME=Demo
+DESCRIPTION=This is an awesome page
+DOMAIN=https://domain.com
+ADMIN_USER=admin
+ADMIN_PASSWORD=admin
+ADMIN_EMAIL=info@admin.com
+USE_CDN=true
+POSTGRES_SSLMODE=false # enable ssl_mode for postgres (To enable use require)
+DISABLE_LOGS=false # disable logs from appearing and writing to disk
+
+IS_DOCKER=false
+IS_AWS=false
+SASS=/usr/local/bin/sass
+CMD_FILE=/bin/bash

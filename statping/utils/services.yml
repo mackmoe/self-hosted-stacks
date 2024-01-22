@@ -1,0 +1,36 @@
+x-tcpservice: &tcpservice
+  type: tcp
+  check_interval: 60
+  timeout: 15
+  allow_notifications: true
+  notify_after: 0
+  notify_all_changes: true
+  public: true
+  redirect: true
+
+x-httpservice: &httpservice
+  type: http
+  method: GET
+  check_interval: 45
+  timeout: 10
+  expected_status: 200
+  allow_notifications: true
+  notify_after: 2
+  notify_all_changes: true
+  public: true
+  redirect: true
+
+services:
+
+  - name: Statping Demo
+    domain: https://demo.statping.com
+    <<: *httpservice
+
+  - name: Portainer
+    domain: portainer
+    port: 9000
+    <<: *tcpservice
+
+  - name: Statping Github
+    domain: https://github.com/statping/statping
+    <<: *httpservice
