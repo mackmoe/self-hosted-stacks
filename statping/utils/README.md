@@ -13,7 +13,7 @@ If you have the DB_CONN environment variable set Statping will bypass all values
 # Environment Variables
 This lists all environment variables that could be passed into Statping. You can see all default values in utils/env.go file under the InitEnvs() function.
 
-Statping Server
+## Statping Server
 PORT - Set the outgoing port for the HTTP server (or use --port, default: 8080)
 HOST - Bind a specific IP address to the HTTP server (or use --ip)
 VERBOSE - Display more logs in verbose mode. (1 - 4)
@@ -24,14 +24,13 @@ REMOVE_AFTER - Automatically delete records after time (default 3 months, '12h =
 CLEANUP_INTERVAL - Interval to check for old records (default 1 hour, '1h = 1 hour')
 ALLOW_REPORTS - Send Statping anonymous error reports so we can see issues (default is false)
 SERVER_PORT - Port number to run Statping HTTP server on (or use -p/--port)
-Automatic SSL Certificate
+## Automatic SSL Certificate
 With LetsEncrypt enabled, Statping will run through the SSL process and create the SSL certs in the certs folder. Read more about the SSL Process on the SSL Wiki.
-
 LETSENCRYPT_ENABLE - Set to true to have LetsEncrypt enabled. (defaults to false)
 LETSENCRYPT_HOST - Domain to generate SSL certificate
 LETSENCRYPT_EMAIL - Email address that gets sent with the LetsEncrypt Request
 LETSENCRYPT_LOCAL - Set for LetsEncrypt testing
-Database
+## Database
 DB_CONN - Database connection (sqlite, postgres, mysql) Will automatically start if set to 'sqlite'
 DB_HOST - Database hostname or IP address
 DB_USER - Database username
@@ -45,7 +44,7 @@ MAX_OPEN_CONN - Set Maximum Open Connections for database server (default: 25)
 MAX_IDLE_CONN - Set Maximum Idle Connections for database server (default: 25)
 MAX_LIFE_CONN - Set Maximum Life Connections for database server (default: 5 minutes)
 PREFIX - Add a prefix string to each Prometheus metric (default is empty)
-Connection
+## Connection
 BASE_PATH - Set the base URL prefix (set to 'monitor' if URL is domain.com/monitor)
 PREFIX - A Prefix for each value in Prometheus /metric exporter
 HTTP_PROXY - Use a HTTP Proxy for HTTP Requests
@@ -58,12 +57,11 @@ LOGS_MAX_COUNT - Maximum amount of log files (defaults to 5)
 LOGS_MAX_AGE - Maximum age for log files (defaults to 28 days)
 LOGS_MAX_SIZE - Maximum size for log files (defaults to 16 MB)
 LANGUAGE - Language to use (en, fr, it, ru, zh, de, ko, ja)
-Assets
+## Assets
 SASS - Set the absolute path to the sass binary location (find with which sass)
 USE_ASSETS - Automatically use assets from 'assets folder' (true/false)
 If you have issues with Statping not loading frontend files, delete the assets folder and reboot.
-
-Automatic Fills
+## Automatic Fills
 NAME - Set a name for the Statping status page
 DESCRIPTION - Set a description for the Statping status page
 DOMAIN - Set a URL for the Statping status page

@@ -4,7 +4,7 @@ x-tcpservice: &tcpservice
   timeout: 15
   allow_notifications: true
   notify_after: 0
-  notify_all_changes: true
+  notify_all_changes: false
   public: true
   redirect: true
 
@@ -16,21 +16,41 @@ x-httpservice: &httpservice
   expected_status: 200
   allow_notifications: true
   notify_after: 2
-  notify_all_changes: true
+  notify_all_changes: false
   public: true
   redirect: true
 
 services:
 
-  - name: Statping Demo
-    domain: https://demo.statping.com
-    <<: *httpservice
-
-  - name: Portainer
+  - name: Portainer Container Management
     domain: portainer
-    port: 9000
+    port: 32772
     <<: *tcpservice
 
-  - name: Statping Github
-    domain: https://github.com/statping/statping
+  - name: Statping Health Monitoring
+    domain: https://statping.molovestoshare.com
+    <<: *httpservice
+
+  - name: Homebridge - Home Automation
+    domain: https://homebridge.molovestoshare.com
+    <<: *httpservice
+
+  - name: Self Hosted Plex
+    domain: https://plex.molovestoshare.com
+    <<: *httpservice
+
+  - name: Deluge - Ultimate Media Stack
+    domain: https://ums-proxy.molovestoshare.com
+    <<: *httpservice
+
+  - name: Prowlarr - Ultimate Media Stack
+    domain: https://prowlarr.molovestoshare.com
+    <<: *httpservice
+
+  - name: Sonarr - Ultimate Media Stack
+    domain: https://sonarr.molovestoshare.com
+    <<: *httpservice
+
+  - name: Radarr - Ultimate Media Stack
+    domain: https://radarr.molovestoshare.com
     <<: *httpservice

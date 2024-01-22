@@ -4,6 +4,9 @@
 ---
 version: '2.3'
 
+volumes:
+  statping_data:
+
 services:
   statping:
     container_name: statping
@@ -12,13 +15,21 @@ services:
     volumes:
       - statping_data:/app
     environment:
-      DB_CONN: sqlite
+      - ADMIN_USER=${ADMIN_USER}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - AUTH_USERNAME=${AUTH_USERNAME}
+      - AUTH_PASSWORD=${AUTH_PASSWORD}
+      - DB_CONN=${DB_CONN}
+      - API_SECRET=${ADMIN_PASSWORD}
+      - USE_CDN=${USE_CDN}
+      - USE_ASSETS=${USE_ASSETS}
+      - IS_DOCKER=${IS_DOCKER}
+      - IS_AWS=${IS_AWS}
+      - SASS=${SASS}
+      - CMD_FILE=${CMD_FILE}
     ports:
       - 8080:8080
-    pull_policy: build
     deploy:
       labels:
         com.example.description: "monitoring"
-
-volumes:
-  statping_data:

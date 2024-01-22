@@ -1,21 +1,27 @@
-DB_CONN=postgres
-DB_HOST=0.0.0.0
-DB_PORT=5432
-DB_USER=root
-DB_PASS=password123
-DB_DATABASE=root
+LANGUAGE=en
 
-NAME=Demo
-DESCRIPTION=This is an awesome page
-DOMAIN=https://domain.com
+NAME=StatPing App Monitoring
+DESCRIPTION=Self-Hosted Application Health Monitoring
+DOMAIN=https://appstatus.molovestoshare.com
+
 ADMIN_USER=admin
-ADMIN_PASSWORD=admin
+ADMIN_PASSWORD=admmin
 ADMIN_EMAIL=info@admin.com
-USE_CDN=true
-POSTGRES_SSLMODE=false # enable ssl_mode for postgres (To enable use require)
-DISABLE_LOGS=false # disable logs from appearing and writing to disk
+AUTH_USERNAME=${ADMIN_USER:-default}
+AUTH_PASSWORD=${ADMIN_PASSWORD:-default}
 
-IS_DOCKER=false
+DB_CONN=sqlite
+DB_HOST=0.0.0.0
+
+USE_CDN=true
+USE_ASSETS=true
+DISABLE_HTTP=false
+
+API_SECRET=${ADMIN_PASSWORD:-default}
+DISABLE_COLORS=false
+DISABLE_LOGS=false
+
+IS_DOCKER=true
 IS_AWS=false
 SASS=/usr/local/bin/sass
 CMD_FILE=/bin/bash
