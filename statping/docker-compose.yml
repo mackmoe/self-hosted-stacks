@@ -1,4 +1,8 @@
 name: statping
+
+volumes:
+  statping_data: {}
+
 services:
   statping:
     cpu_shares: 90
@@ -28,6 +32,7 @@ services:
     volumes:
       - type: volume
         target: /app
+        source: statping_data
       - type: bind
         source: /home/ubuntu/Git/self-hosted-stacks/statping/utils/services.yml
         target: /app/services.yml
