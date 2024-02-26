@@ -1,0 +1,11 @@
+[36mINFO[0m[0000] Starting Statping v0.90.74                    [36mtype[0m=cmd
+[36mINFO[0m[0000] Starting in Setup Mode                        [36mtype[0m=cmd
+[36mINFO[0m[0000] Statping HTTP Server running on http://0.0.0.0:8080/  [36mtype[0m=handlers
+[36mINFO[0m[0060] /health (GET) | IP: localhost:8080            [36mload_micro_seconds[0m=255 [36mmethod[0m=GET [36mtype[0m=handlers [36murl[0m=/health
+[36mINFO[0m[0120] /health (GET) | IP: localhost:8080            [36mload_micro_seconds[0m=132 [36mmethod[0m=GET [36mtype[0m=handlers [36murl[0m=/health
+[36mINFO[0m[0180] /health (GET) | IP: localhost:8080            [36mload_micro_seconds[0m=124 [36mmethod[0m=GET [36mtype[0m=handlers [36murl[0m=/health
+[36mINFO[0m[0241] /health (GET) | IP: localhost:8080            [36mload_micro_seconds[0m=182 [36mmethod[0m=GET [36mtype[0m=handlers [36murl[0m=/health
+[36mINFO[0m[0301] /health (GET) | IP: localhost:8080            [36mload_micro_seconds[0m=128 [36mmethod[0m=GET [36mtype[0m=handlers [36murl[0m=/health
+[36mINFO[0m[0362] /health (GET) | IP: localhost:8080            [36mload_micro_seconds[0m=161 [36mmethod[0m=GET [36mtype[0m=handlers [36murl[0m=/health
+[36mINFO[0m[0422] /health (GET) | IP: localhost:8080            [36mload_micro_seconds[0m=135 [36mmethod[0m=GET [36mtype[0m=handlers [36murl[0m=/health
+[36mINFO[0m[0482] /health (GET) | IP: localhost:8080            [36mload_micro_seconds[0m=224 [36mmethod[0m=GET [36mtype[0m=handlers [36murl[0m=/health

@@ -1,5 +1,4 @@
 connection: sqlite
 host: localhost
-user: {$ADMIN_USER:-default}
-password: {$ADMIN_PASSWORD:-default}
-api_secret: {$API_PASSWORD:-default}
+api_secret: ${API_PASSWORD:-default}
+location: /app/statping
