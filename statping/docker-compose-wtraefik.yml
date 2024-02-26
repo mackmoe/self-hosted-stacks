@@ -1,0 +1,56 @@
+version: '3.4'
+
+services:
+
+  traefik:
+    container_name: traefik
+    image: traefik:v2.2.0
+    restart: always
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.http.tls.certResolver=leresolverresolver
+      - --providers.docker
+      - --log=true
+      - --log.level=INFO
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.statping.com`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.middlewares=admin"
+      - "traefik.http.routers.traefik.tls.certresolver=leresolver"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+  statping:
+    container_name: statping
+    image: statping/statping:latest
+    restart: always
+    networks:
+      - frontend
+    volumes:
+      - ./statping_data:/app
+    environment:
+      DB_CONN: sqlite
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.statping.rule=Host(`demo.statping.com`)"
+      - "traefik.http.routers.statping.tls.certresolver=leresolver"
+      - "traefik.http.routers.statping.entrypoints=websecure"
+      - "traefik.http.services.statping.loadbalancer.server.port=8080"
+
+networks:
+  frontend:
+    driver: bridge

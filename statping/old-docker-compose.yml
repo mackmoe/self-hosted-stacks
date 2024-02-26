@@ -1,0 +1,106 @@
+name: statping
+services:
+    statping:
+      container_name: statping
+      cpu_shares: 90
+      command:
+          - /bin/sh
+          - -c
+          - statping --port 8080
+      environment:
+          ADMIN_EMAIL: monash@mystatping.com
+          ADMIN_PASSWORD: ~Z0vJE8Q_S4wezp6r@)u>9:52N/T\lM1
+          ADMIN_USER: monash
+          API_SECRET: ~Z0vJE8Q_S4wezp6r@)u>9:52N/T\lM1
+          DESCRIPTION: Self-Hosted Application Health Monitoring
+          DOMAIN: https://appstatus.molovestoshare.com
+          IS_DOCKER: "true"
+          NAME: StatPing App Monitoring
+          PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+          PORT: "8080"
+          SASS: /usr/local/bin/sassc
+          STATPING_DIR: /app
+      image: statping/statping:latest
+      network_mode: statping_default
+      ports:
+          - target: 8080
+            published: "8080"
+            protocol: tcp
+      privileged: true
+      restart: always
+      volumes:
+          - type: bind
+            source: /home/ubuntu/Git/self-hosted-stacks/statping/utils/services.yml
+            target: /app/services.yml
+          - type: bind
+            source: /var/lib/docker/volumes/statping_statping_data/_data
+            target: /app
+      x-casaos:
+          envs:
+              - container: NAME
+                description:
+                  en_us: ""
+              - container: ADMIN_EMAIL
+                description:
+                  en_us: ""
+              - container: ADMIN_PASSWORD
+                description:
+                  en_us: ""
+              - container: ADMIN_USER
+                description:
+                  en_us: ""
+              - container: API_SECRET
+                description:
+                  en_us: ""
+              - container: DESCRIPTION
+                description:
+                  en_us: ""
+              - container: DOMAIN
+                description:
+                  en_us: ""
+              - container: PATH
+                description:
+                  en_us: ""
+              - container: IS_DOCKER
+                description:
+                  en_us: ""
+              - container: SASS
+                description:
+                  en_us: ""
+              - container: STATPING_DIR
+                description:
+                  en_us: ""
+              - container: PORT
+                description:
+                  en_us: ""
+          ports:
+              - container: "8080"
+                description:
+                  en_us: ""
+          volumes:
+            - type: volume
+              target: /app
+              source: statping_data
+            - type: bind
+              source: /home/ubuntu/Git/self-hosted-stacks/statping/utils/services.yml
+              target: /app/services.yml
+              bind:
+                create_host_path: true  
+x-casaos:
+    architectures:
+        - arm64
+    author: CasaOS User
+    category: unknown
+    description:
+        en_us: ""
+    developer: unknown
+    icon: https://img.utdstc.com/icon/ef4/b4f/ef4b4fd661b35599142b4daaeeeb40ae470068c33126c32c1d921675584f3cae:200
+    main: statping
+    scheme: http
+    tagline:
+        en_us: This is a compose app converted from a legacy app (CasaOS v0.4.3 or earlier)
+    thumbnail: ""
+    tips:
+        custom: This is a compose app converted from a legacy app (CasaOS v0.4.3 or earlier)
+    title:
+        en_us: statping
