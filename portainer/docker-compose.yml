@@ -1,3 +1,5 @@
+# NOTE Portainer creates a fake mount point for docker compose stacks. The actual location is /var/lib/docker/volumes/
+
 name: portainer
 services:
   portainer:
