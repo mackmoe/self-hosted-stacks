@@ -1,23 +1,48 @@
 version: '2.3'
-
-volumes:
-  statping_data: {}
-
+name: statping
 services:
-  statping:
+  main_app:
+    cpu_shares: 90
+    command: []
     container_name: statping
+    deploy:
+      resources:
+        limits:
+          memory: 3790M
+    environment:
+      - ADMIN_EMAIL=monash@spdmin.com
+      - ADMIN_PASSWORD=~Z0vJE8Q_S4wezp6r@)u>9:52N/T\lM1
+      - ADMIN_USER=monash
+      - DB_CONN=sqlite
+      - DESCRIPTION=Self-Hosted Application Health Monitoring
+      - IS_DOCKER=true
+      - NAME=StatPing App Monitoring
+      - USE_CDN=false
+    hostname: statping
     image: statping/statping:latest
-    domainname: appstatus.molovestoshare.com
-    env_file:
-      - .env
+    labels:
+      icon: https://icon.casaos.io/main/all/statping.png
+    ports:
+      - target: 8080
+        published: "8080"
+        protocol: tcp
+    privileged: true
     restart: always
     volumes:
-      - statping_data:/app
-      - ./utils:/app
-    environment:
-      DB_CONN: sqlite
-      ADMIN_USER: "${ADMIN_USER:-default}" #${VAR:-default} 
-      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-default}"
-      DESCRIPTION: "${DESCRIPTION:-default}"
-    ports:
-      - 8080:8080
+      - type: bind
+        source: /var/lib/casaos/apps/mindful_aner/statping_data
+        target: /app
+    devices: []
+    cap_add: []
+    network_mode: bridge
+x-casaos:
+  author: self
+  category: self
+  hostname: appstatus.molovestoshare.com
+  icon: https://icon.casaos.io/main/all/statping.png
+  index: /
+  port_map: ""
+  scheme: http
+  store_app_id: mindful_aner
+  title:
+    custom: StatPing
