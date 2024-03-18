@@ -1,0 +1,14 @@
+# Title: watchtower
+# Description: A container-based solution for automating Docker container base image updates.
+# Icon URL: https://containrrr.dev/watchtower/images/logo-450px.png
+version: '3.9'
+services:
+  watchtower:
+    container_name: watchtower
+    privileged: true
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    labels:
+      org.label-schema.group: "mgmt-tools"

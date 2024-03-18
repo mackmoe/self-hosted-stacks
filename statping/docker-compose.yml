@@ -30,7 +30,7 @@ services:
     restart: always
     volumes:
       - type: bind
-        source: /var/lib/casaos/apps/mindful_aner/statping_data
+        source: /var/lib/casaos/apps/statping/statping_data
         target: /app
     devices: []
     cap_add: []
@@ -43,6 +43,6 @@ x-casaos:
   index: /
   port_map: ""
   scheme: http
-  store_app_id: mindful_aner
+  store_app_id: StatPing
   title:
     custom: StatPing

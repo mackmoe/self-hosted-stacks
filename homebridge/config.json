@@ -96,7 +96,7 @@
             "auth": {
                 "refreshInterval": 4,
                 "proxy": {
-                    "clientHost": "192.168.50.239",
+                    "clientHost": "192.168.50.234",
                     "port": 9000
                 }
             },

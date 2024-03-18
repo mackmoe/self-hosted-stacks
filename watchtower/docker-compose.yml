@@ -1,14 +1,43 @@
-# Title: watchtower
-# Description: A container-based solution for automating Docker container base image updates.
-# Icon URL: https://containrrr.dev/watchtower/images/logo-450px.png
-version: '3.9'
+version: '2.3'
+name: watchtower
 services:
-  watchtower:
-    container_name: watchtower
-    privileged: true
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
+  main_app:
+    cpu_shares: 45
+    command: []
+    container_name: tc-watchtower
+    deploy:
+      resources:
+        limits:
+          memory: 3790M
+    environment:
+      - WATCHTOWER_CLEANUP=true
+    hostname: watchtower
+    image: containrrr/watchtower:latest
     labels:
-      org.label-schema.group: "mgmt-tools"
+      icon: https://icon.casaos.io/main/all/watchtower.png
+    ports:
+      - target: 80
+        published: "3080"
+        protocol: tcp
+      - target: 443
+        published: "3443"
+        protocol: tcp
+    privileged: true
+    restart: always
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    devices: []
+    cap_add: []
+    network_mode: bridge
+x-casaos:
+  author: self
+  category: self
+  icon: https://icon.casaos.io/main/all/watchtower.png
+  index: /
+  port_map: ""
+  scheme: http
+  store_app_id: Watchtower
+  title:
+    custom: Watchtower

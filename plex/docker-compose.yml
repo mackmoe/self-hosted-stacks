@@ -33,26 +33,26 @@ services:
       - /dev/dri/renderD128:/dev/dri/renderD128
       - /dev/dri/card0:/dev/dri/card0
       - plex_data:/config
-      - /mnt/tf_nfsdisk/Media/tv-shows:/TV Shows
-      - /mnt/tf_nfsdisk/Media/movies:/Movies
+      - /mnt/TF_SMB/Media/tv-shows:/TV Shows
+      - /mnt/TF_SMB/Media/movies:/Movies
     network_mode: host
     ports:
-      - 192.168.50.239:32400:32400
-      - 192.168.50.239::1900/udp
-      - 192.168.50.239::3005
-      - 192.168.50.239::5353/udp
-      - 192.168.50.239::8324
-      - 192.168.50.239::32469
-      - 192.168.50.239::32410/udp
-      - 192.168.50.239::32412/udp
-      - 192.168.50.239::32413/udp
-      - 192.168.50.239::32414/udp
+      - 192.168.50.234:32400:32400
+      - 192.168.50.234::1900/udp
+      - 192.168.50.234::3005
+      - 192.168.50.234::5353/udp
+      - 192.168.50.234::8324
+      - 192.168.50.234::32469
+      - 192.168.50.234::32410/udp
+      - 192.168.50.234::32412/udp
+      - 192.168.50.234::32413/udp
+      - 192.168.50.234::32414/udp
     restart: unless-stopped
     deploy:
       # replicas: 2
       labels:
-        com.centurylinklabs.watchtower.enable: "true"
         org.label-schema.group: "ums-svcs"
+        # com.centurylinklabs.watchtower.enable: "true"
         # traefik.enable: "false"
         # traefik.port: "32400"
         # traefik.frontend.rule: "Host:plex.molovestoshare.com"
