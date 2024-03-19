@@ -3,7 +3,6 @@ name: statping
 services:
   main_app:
     cpu_shares: 90
-    command: []
     container_name: statping
     deploy:
       resources:
