@@ -1,81 +1,16 @@
-name: portainer
+# Title: watchtower
+# Description: A container-based solution for automating Docker container base image updates.
+# Icon URL: https://containrrr.dev/watchtower/images/logo-450px.png
+version: '3.9'
 services:
-  portainer:
-    cpu_shares: 90
-    command: []
-    container_name: tc-portainer
-    deploy:
-      resources:
-        limits:
-          memory: 3790M
-    hostname: tc-portainer
-    image: portainer/portainer-ee:latest
-    labels:
-      icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
-      org.label-schema.group: mgmt-ui
-    ports:
-      - mode: ingress
-        target: 9000
-        published: "32772"
-        protocol: tcp
-    privileged: true
-    restart: always
-    volumes:
-      - type: bind
-        source: /data/compose/portainer
-        target: /data
-        bind:
-          create_host_path: true
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        bind:
-          create_host_path: true
-    devices: []
-    cap_add: []
-    environment: []
-    networks:
-      - portainer
   watchtower:
-    cpu_shares: 90
-    command: []
-    container_name: tc-watchtower
-    deploy:
-      resources:
-        limits:
-          memory: 3790M
-    hostname: tc-watchtower
-    image: containrrr/watchtower:arm64v8-latest
-    labels:
-      icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
-      org.label-schema.group: mgmt-ui
+    container_name: watchtower
     privileged: true
-    restart: unless-stopped
+    image: containrrr/watchtower
+    environment:
+      - WATCHTOWER_CLEANUP=true
     volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        bind:
-          create_host_path: true
-    ports: []
-    devices: []
-    cap_add: []
-    environment: []
-    networks:
-      - default
-networks:
-  default:
-    name: portainer_default
-  portainer:
-    name: portainer
-x-casaos:
-  author: self
-  category: self
-  hostname: portainer.molovestoshare.com
-  icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
-  index: /
-  port_map: ""
-  scheme: http
-  store_app_id: portainer
-  title:
-    custom: Portainer Docker UI
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    labels:
+      org.label-schema.group: "mgmt-tools"
