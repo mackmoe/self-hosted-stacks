@@ -1,98 +1,114 @@
 name: statping
 services:
-    statping:
-        cpu_shares: 90
-        command:
-            - /bin/sh
-            - -c
-            - statping --port 8080
-        environment:
-            ADMIN_EMAIL: monash@spdmin.com
-            ADMIN_PASSWORD: ~Z0vJE8Q_S4wezp6r@)u>9:52N/T\lM1
-            ADMIN_USER: monash
-            DB_CONN: sqlite
-            DESCRIPTION: Self-Hosted Application Health Monitoring
-            IS_DOCKER: "true"
-            NAME: StatPing App Monitoring
-            PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-            PORT: "8080"
-            SASS: /usr/local/bin/sassc
-            STATPING_DIR: /app
-            USE_CDN: "false"
-        image: statping/statping:latest
-        network_mode: bridge
-        ports:
-            - target: 8080
-              published: "8080"
-              protocol: tcp
-        privileged: true
-        restart: always
-        volumes:
-            - type: bind
-              source: /var/lib/casaos/apps/statping/statping_data
-              target: /app
-        x-casaos:
-            envs:
-                - container: ADMIN_PASSWORD
-                  description:
-                    en_us: ""
-                - container: ADMIN_USER
-                  description:
-                    en_us: ""
-                - container: DB_CONN
-                  description:
-                    en_us: ""
-                - container: DESCRIPTION
-                  description:
-                    en_us: ""
-                - container: IS_DOCKER
-                  description:
-                    en_us: ""
-                - container: NAME
-                  description:
-                    en_us: ""
-                - container: USE_CDN
-                  description:
-                    en_us: ""
-                - container: ADMIN_EMAIL
-                  description:
-                    en_us: ""
-                - container: PATH
-                  description:
-                    en_us: ""
-                - container: SASS
-                  description:
-                    en_us: ""
-                - container: STATPING_DIR
-                  description:
-                    en_us: ""
-                - container: PORT
-                  description:
-                    en_us: ""
-            ports:
-                - container: "8080"
-                  description:
-                    en_us: ""
-            volumes:
-                - container: /app
-                  description:
-                    en_us: ""
+  statping:
+    cpu_shares: 90
+    command:
+      - /bin/sh
+      - -c
+      - statping --port 8080
+    container_name: tc-statping
+    deploy:
+      resources:
+        limits:
+          memory: 3790M
+    environment:
+      - ADMIN_EMAIL=monash@spdmin.com
+      - ADMIN_PASSWORD=~Z0vJE8Q_S4wezp6r@)u>9:52N/T\lM1
+      - ADMIN_USER=monash
+      - DB_CONN=sqlite
+      - DESCRIPTION=Self-Hosted Application Health Monitoring
+      - IS_DOCKER=true
+      - NAME=StatPing App Monitoring
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - PORT=8080
+      - SASS=/usr/local/bin/sassc
+      - STATPING_DIR=/app
+      - USE_CDN=false
+    image: statping/statping:latest
+    labels:
+      icon: https://icon.casaos.io/main/all/statping.png
+    ports:
+      - target: 8080
+        published: "8080"
+        protocol: tcp
+    privileged: true
+    restart: always
+    volumes:
+      - type: bind
+        source: /var/lib/casaos/apps/statping/statping_data
+        target: /app
+    x-casaos:
+      envs:
+        - container: ADMIN_PASSWORD
+          description:
+            en_us: ""
+        - container: ADMIN_USER
+          description:
+            en_us: ""
+        - container: DB_CONN
+          description:
+            en_us: ""
+        - container: DESCRIPTION
+          description:
+            en_us: ""
+        - container: IS_DOCKER
+          description:
+            en_us: ""
+        - container: NAME
+          description:
+            en_us: ""
+        - container: USE_CDN
+          description:
+            en_us: ""
+        - container: ADMIN_EMAIL
+          description:
+            en_us: ""
+        - container: PATH
+          description:
+            en_us: ""
+        - container: SASS
+          description:
+            en_us: ""
+        - container: STATPING_DIR
+          description:
+            en_us: ""
+        - container: PORT
+          description:
+            en_us: ""
+      ports:
+        - container: "8080"
+          description:
+            en_us: ""
+      volumes:
+        - container: /app
+          description:
+            en_us: ""
+    devices: []
+    cap_add: []
+    network_mode: bridge
+    hostname: tc-statping
 x-casaos:
-    architectures:
-        - arm64
-    author: CasaOS User
-    category: unknown
-    description:
-        en_us: ""
-    developer: unknown
-    icon: https://icon.casaos.io/main/all/statping.png
-    main: statping
-    port_map: "8080"
-    scheme: http
-    tagline:
-        en_us: This is a compose app converted from a legacy app (CasaOS v0.4.3 or earlier)
-    thumbnail: ""
-    tips:
-        custom: This is a compose app converted from a legacy app (CasaOS v0.4.3 or earlier)
-    title:
-        en_us: statping
+  architectures:
+    - arm64
+  author: CasaOS User
+  category: unknown
+  description:
+    en_us: ""
+  developer: unknown
+  hostname: appstatus.molovestoshare.com
+  icon: https://icon.casaos.io/main/all/statping.png
+  index: /
+  main: statping
+  port_map: ""
+  scheme: http
+  store_app_id: statping
+  tagline:
+    en_us: This is a compose app converted from a legacy app (CasaOS v0.4.3 or
+      earlier)
+  thumbnail: ""
+  tips:
+    custom: This is a compose app converted from a legacy app (CasaOS v0.4.3 or
+      earlier)
+  title:
+    custom: ""
+    en_us: statping

@@ -1,3 +1,6 @@
+# For this repo
+Deploy statping with the CasaOS dashboard
+
 # Bulk Import Services
 You can import multiple services when Statping first loads by creating a file named services.yml in the working directory for Statping. It will insert the new service into the database, and will not be re-added on reboot. All services must be an array under the services: field.
 

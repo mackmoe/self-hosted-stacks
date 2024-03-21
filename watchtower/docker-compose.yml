@@ -1,43 +1,81 @@
-version: '2.3'
-name: watchtower
+name: portainer
 services:
-  main_app:
-    cpu_shares: 45
+  portainer:
+    cpu_shares: 90
+    command: []
+    container_name: tc-portainer
+    deploy:
+      resources:
+        limits:
+          memory: 3790M
+    hostname: tc-portainer
+    image: portainer/portainer-ee:latest
+    labels:
+      icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
+      org.label-schema.group: mgmt-ui
+    ports:
+      - mode: ingress
+        target: 9000
+        published: "32772"
+        protocol: tcp
+    privileged: true
+    restart: always
+    volumes:
+      - type: bind
+        source: /data/compose/portainer
+        target: /data
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    environment: []
+    networks:
+      - portainer
+  watchtower:
+    cpu_shares: 90
     command: []
     container_name: tc-watchtower
     deploy:
       resources:
         limits:
           memory: 3790M
-    environment:
-      - WATCHTOWER_CLEANUP=true
     hostname: tc-watchtower
     image: containrrr/watchtower:arm64v8-latest
     labels:
-      icon: https://icon.casaos.io/main/all/watchtower.png
-    ports:
-      - target: 80
-        published: "3080"
-        protocol: tcp
-      - target: 443
-        published: "3443"
-        protocol: tcp
+      icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
+      org.label-schema.group: mgmt-ui
     privileged: true
-    restart: always
+    restart: unless-stopped
     volumes:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
+        bind:
+          create_host_path: true
+    ports: []
     devices: []
     cap_add: []
-    network_mode: bridge
+    environment: []
+    networks:
+      - default
+networks:
+  default:
+    name: portainer_default
+  portainer:
+    name: portainer
 x-casaos:
   author: self
   category: self
-  icon: https://icon.casaos.io/main/all/watchtower.png
+  hostname: portainer.molovestoshare.com
+  icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
   index: /
   port_map: ""
   scheme: http
-  store_app_id: Watchtower
+  store_app_id: portainer
   title:
-    custom: Watchtower
+    custom: Portainer Docker UI
