@@ -11,8 +11,8 @@ services:
           memory: 3790M
     environment:
       - WATCHTOWER_CLEANUP=true
-    hostname: watchtower
-    image: containrrr/watchtower:latest
+    hostname: tc-watchtower
+    image: containrrr/watchtower:arm64v8-latest
     labels:
       icon: https://icon.casaos.io/main/all/watchtower.png
     ports:
