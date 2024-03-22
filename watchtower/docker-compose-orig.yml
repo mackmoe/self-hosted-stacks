@@ -1,14 +1,21 @@
-# Title: watchtower
-# Description: A container-based solution for automating Docker container base image updates.
-# Icon URL: https://containrrr.dev/watchtower/images/logo-450px.png
 version: '3.9'
 services:
-  watchtower:
-    container_name: watchtower
-    privileged: true
+  th-watchtower:
     image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-    labels:
-      org.label-schema.group: "mgmt-tools"
+    environment: [ "DOCKER_HOST=tcp://192.168.50.234:2376", "WATCHTOWER_HTTP_API_PERIODIC_POLLS=true", "WATCHTOWER_HTTP_API_METRICS=true", "WATCHTOWER_CLEANUP=true", "WATCHTOWER_REMOVE_VOLUMES=true" ]
+    command: --http-api-update --http-api-periodic-polls --http-api-token demitoken
+    labels: [ "com.centurylinklabs.watchtower.scope=th-watchtowerrr" ]
+
+  tf-watchtowerrr:
+    image: containrrr/watchtower
+    environment: [ "WATCHTOWER_HTTP_API_PERIODIC_POLLS=true", "WATCHTOWER_CLEANUP=true", "WATCHTOWER_HTTP_API_METRICS=true", "WATCHTOWER_REMOVE_VOLUMES=true" ]
+    volumes: [ "/var/run/docker.sock:/var/run/docker.sock" ]
+    command: --http-api-token --scope tf-watchtowerrr
+    labels: [ "com.centurylinklabs.watchtower.scope=tf-watchtowerrr" ]
+
+  tc-watchtower:
+    image: containrrr/watchtower
+    environment: [ "WATCHTOWER_HTTP_API_METRICS=true", "WATCHTOWER_HTTP_API_PERIODIC_POLLS=true", "WATCHTOWER_CLEANUP=true", DOCKER_HOST="tcp://192.168.50.193:2376" ]
+    volumes: [ "/var/run/docker.sock:/var/run/docker.sock" ]
+    command: --http-api-token --scope tc-watchtower
+    labels: [ "org.label-schema.group=mgmt-tools", "com.centurylinklabs.watchtower.scope=tc-watchtower" ]
