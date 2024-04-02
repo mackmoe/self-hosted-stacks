@@ -33,8 +33,8 @@ services:
       - /dev/dri/renderD128:/dev/dri/renderD128
       - /dev/dri/card0:/dev/dri/card0
       - plex_data:/config
-      - /mnt/TF_SMB/Media/tv-shows:/TV Shows
-      - /mnt/TF_SMB/Media/movies:/Movies
+      - /mnt/tf_nfsdisk/Media/tv-shows:/TV Shows
+      - /mnt/tf_nfsdisk/Media/movies:/Movies
     network_mode: host
     ports:
       - 192.168.50.234:32400:32400
