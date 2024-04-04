@@ -21,9 +21,6 @@ services:
     - 8112:8112
     - 6881:6881
     - 51820:51820
-    networks:
-      default:
-        ipv4_address: 172.20.0.50
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped   
@@ -41,8 +38,6 @@ services:
       - DOCKER_MODS=ghcr.io/themepark-dev/theme.park:deluge
       - TP_COMMUNITY_THEME=true
       - TP_THEME=onedark
-      # - TP_THEME=overseerr
-      # - TP_DOMAIN=themepark.molovestoshare.com
     volumes:
       - deluge_data:/config
       - /mnt/tf_nfsdisk/Media/downloads:/downloads
