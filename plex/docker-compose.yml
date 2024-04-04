@@ -34,6 +34,7 @@ services:
       - DAC_READ_SEARCH
       - SYS_ADMIN
     environment:
+      - HOSTNAME=ums-plex
       - PLEX_UID=${PUID:-1000}
       - PLEX_GID=${GUID:-1000}
       - VERSION=docker
@@ -62,14 +63,10 @@ services:
       - 192.168.50.234::32413/udp
       - 192.168.50.234::32414/udp
     restart: unless-stopped
-    # deploy:
-      # mode: replicated
-      # replicas: 2
-      # endpoint_mode: vip
-      labels:
-        org.label-schema.group: "ums-svcs"
-        com.centurylinklabs.watchtower.enable: "true"
-        # traefik.enable: "false"
-        # traefik.port: "32400"
-        # traefik.frontend.rule: "Host:plex.molovestoshare.com"
-        # traefik.backend: plex
+    labels:
+      org.label-schema.group: "ums-svcs"
+      com.centurylinklabs.watchtower.enable: "true"
+      # traefik.enable: "false"
+      # traefik.port: "32400"
+      # traefik.frontend.rule: "Host:plex.molovestoshare.com"
+      # traefik.backend: plex
