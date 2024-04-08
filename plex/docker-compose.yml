@@ -8,22 +8,8 @@ version: '3.9'
 
 volumes:
   plex_data: {}
-  kitana_data: {}
 
 services:
-  kitana:
-    image: pannal/kitana:latest
-    container_name: ums-kitana
-    hostname: ums-kitana
-    domainname: kitana.molovestoshare.com
-    volumes:
-      - kitana_data:/app/data
-    ports:
-      - 31337:31337
-    links:
-     - plex
-    command: -B 0.0.0.0:31337 -P
-    restart: unless-stopped
   plex:
     privileged: true
     image: lscr.io/linuxserver/plex
