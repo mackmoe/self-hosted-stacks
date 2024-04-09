@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 30s
+  scrape_timeout: 60s
+  evaluation_interval: 25s
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: []
+    scheme: http
+    timeout: 30s
+    api_version: v1
+scrape_configs:
+- job_name: node-exporter
+  static_configs:
+    - targets: ['node_exporter:9100']
+- job_name: cadvisor
+  static_configs:
+    - targets: ['cadvisor:8098']
+- job_name: prometheus
+  honor_timestamps: true
+  scrape_interval: 30s
+  scrape_timeout: 60s
+  scheme: http
+  static_configs:
+    - targets: ['localhost:9090']
+  metrics_path: /metrics
