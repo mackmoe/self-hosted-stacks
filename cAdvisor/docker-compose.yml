@@ -4,14 +4,22 @@
 version: "3"
 services:
   node_exporter:
-    image: quay.io/prometheus/node-exporter:v1.5.0
+    cap_add:
+      - ALL
+    image: quay.io/prometheus/node-exporter
     container_name: node_exporter
     hostname: node_exporter
-    command: '--path.rootfs=/host'
     pid: host
     restart: unless-stopped
     volumes:
-      - /:/host:ro,rslave
+      - /sys:/host/sys:ro,rslave #ro1
+      - /proc:/host/proc:ro,rslave #ro1
+      - /:/rootfs:ro,rslave #ro1
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
   cadvisor:
     privileged: true
     container_name: cadvisor
@@ -28,6 +36,7 @@ services:
       - "/sys:/sys"
       - "/var/lib/docker/:/var/lib/docker"
       - "/dev/disk/:/dev/disk"
+      - "/cgroup:/cgroup:ro"
     devices: 
       - "/dev/kmsg"
     labels:
