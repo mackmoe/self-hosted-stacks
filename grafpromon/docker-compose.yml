@@ -1,3 +1,6 @@
+# Title: grafpromon
+# Description: A monitoring solution for Docker hosts and containers with Prometheus, Grafana, cAdvisor, NodeExporter and alerting with Statping
+# Icon URL: https://i.imgur.com/ptSbnTa.png
 version: '3.8'
 networks:
   monitoring:
@@ -45,8 +48,6 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest #gcr.io/cadvisor/cadvisor:v0.47.0
     container_name: cadvisor
     hostname: cadvisor
-    ports:
-      - '8098:8098'
     command:
       - '-port=8098'
     volumes:
