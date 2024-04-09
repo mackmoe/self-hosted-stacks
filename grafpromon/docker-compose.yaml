@@ -3,8 +3,8 @@ networks:
   monitoring:
     driver: bridge
 volumes:
-  prome_data: {}
   graf_data: {}
+  prom_data: {}
 services:
   prometheus:
     image: prom/prometheus
@@ -25,7 +25,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - grafana-data:/var/lib/grafana
+      - graf_data:/var/lib/grafana
     restart: unless-stopped
     environment:
       - GF_SECURITY_ADMIN_USER=admin
@@ -41,9 +41,12 @@ services:
     volumes:
       - /:/host:ro,rslave
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor
+    privileged: true
+    image: gcr.io/cadvisor/cadvisor:latest #gcr.io/cadvisor/cadvisor:v0.47.0
     container_name: cadvisor
     hostname: cadvisor
+    ports:
+      - '8098:8098'
     command:
       - '-port=8098'
     volumes:
@@ -54,7 +57,6 @@ services:
       - /dev/disk/:/dev/disk:ro
     devices:
       - /dev/kmsg
-    privileged: true
     restart: unless-stopped
 
     labels:
