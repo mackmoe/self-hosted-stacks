@@ -1,3 +1,6 @@
+# Title: cadvisor
+# Description: Container Advisor is an open-source tool developed by Google to monitor containers. 
+# Icon URL: https://linuxaws.files.wordpress.com/2022/03/cadvisor.png?w=339
 version: "3"
 services:
   node_exporter:
