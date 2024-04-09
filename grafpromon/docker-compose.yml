@@ -1,13 +1,13 @@
 # Title: grafpromon
 # Description: A monitoring solution for Docker hosts and containers with Prometheus, Grafana, cAdvisor, NodeExporter and alerting with Statping
 # Icon URL: https://i.imgur.com/ptSbnTa.png
+# NOTE:  Still needs caddy to connect to statping and alerting
 version: '3.8'
 networks:
   monitoring:
     driver: bridge
 volumes:
   graf_data: {}
-  prom_data: {}
 services:
   prometheus:
     image: prom/prometheus
@@ -18,7 +18,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
     volumes:
-      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro1
       - ./data:/prometheus
     restart: unless-stopped
   grafana:
@@ -31,19 +31,28 @@ services:
       - graf_data:/var/lib/grafana
     restart: unless-stopped
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=grafana
+      # - GF_SECURITY_ADMIN_USER=admin
+      # - GF_SECURITY_ADMIN_PASSWORD=grafana
       - GF_USERS_ALLOW_SIGN_UP=false
   node_exporter:
-    image: quay.io/prometheus/node-exporter:v1.5.0
+    cap_add:
+      - ALL
+    image: quay.io/prometheus/node-exporter
     container_name: node_exporter
     hostname: node_exporter
-    command: '--path.rootfs=/host'
+    command: 
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
     pid: host
     restart: unless-stopped
     volumes:
       - /:/host:ro,rslave
+      - /sys:/host/sys:ro,rslave
+      - /proc:/host/proc:ro,rslave
   cadvisor:
+    cap_add:
+      - ALL
     privileged: true
     image: gcr.io/cadvisor/cadvisor:latest #gcr.io/cadvisor/cadvisor:v0.47.0
     container_name: cadvisor

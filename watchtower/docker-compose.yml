@@ -8,6 +8,8 @@ services:
     container_name: watchtower
     privileged: true
     image: containrrr/watchtower # or containrrr/watchtower:arm64v8-latest
+    environment:
+      - WATCHTOWER_CLEANUP=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
