@@ -10,6 +10,12 @@ alerting:
     timeout: 10s
     api_version: v1
 scrape_configs:
+- job_name: 'statping'
+  scheme: https
+  scrape_interval: 30s
+  bearer_token: 'YOUR API KEY'
+  static_configs:
+    - targets: ['appstatus.molovestoshare.com']
 - job_name: prometheus
   scrape_interval: 15s
   scrape_timeout: 10s
@@ -25,4 +31,8 @@ scrape_configs:
 - job_name: th_cadvisor
   static_configs:
     - targets: ['cadvisor:8098']
+  honor_timestamps: true
+- job_name: tf_cadvisor
+  static_configs:
+    - targets: ['192.168.50.239:8098']
   honor_timestamps: true
