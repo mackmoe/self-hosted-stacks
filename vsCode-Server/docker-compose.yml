@@ -1,0 +1,22 @@
+# Title: vsCode Server
+# Description: MoLovesToShare vsCode Container
+# IconURL: https://avatars.githubusercontent.com/u/37021919?s=48&v=4
+version: '3.9'
+volumes:
+  container_data: {}
+services:
+  vscode:
+    image: gitpod/openvscode-server
+    container_name: code_container
+    hostname: code
+    environment:
+      - INIT_ASSETS=1 # default
+      - TZ=America/Chicago
+        #- PORT=3380
+    volumes:
+      - "container_data:/home/workspace:cached"
+    ports:
+      - 3300:3000
+    user: 1000:1000 # 1000 default
+    restart: always
+  

@@ -1,18 +1,16 @@
 # Wazuh Docker Copyright (C) 2017, Wazuh Inc. (License GPLv2)
-FROM amazonlinux:2023.3.20240304.0 AS builder
+FROM ubuntu:focal AS builder
 
 ARG WAZUH_VERSION
 ARG WAZUH_TAG_REVISION
 
-RUN yum install curl-minimal openssl xz tar findutils shadow-utils -y
+RUN apt-get update -y && apt-get install curl openssl xz-utils -y
 
 COPY config/opensearch.yml /
 
 COPY config/config.sh .
 
 COPY config/config.yml /
-
-COPY config/action_groups.yml /
 
 COPY config/internal_users.yml /
 
@@ -27,16 +25,13 @@ RUN bash config.sh
 #
 # Copy wazuh-indexer from stage 0
 # Add entrypoint
-
 ################################################################################
-FROM amazonlinux:2023.3.20240304.0
+FROM ubuntu:focal
 
 ENV USER="wazuh-indexer" \
     GROUP="wazuh-indexer" \
     NAME="wazuh-indexer" \
     INSTALL_DIR="/usr/share/wazuh-indexer"
-
-RUN yum install curl-minimal shadow-utils findutils hostname -y
 
 RUN getent group $GROUP || groupadd -r -g 1000 $GROUP
 

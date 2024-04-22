@@ -10,7 +10,10 @@ services:
     container_name: node_exporter
     hostname: node_exporter
     pid: host
+    privileged: true
     restart: unless-stopped
+    ports:
+      - 9100:9100
     volumes:
       - /sys:/host/sys:ro,rslave #ro1
       - /proc:/host/proc:ro,rslave #ro1
@@ -19,24 +22,27 @@ services:
       - '--path.procfs=/host/proc'
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      # - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    labels:
+      org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   cadvisor:
     privileged: true
     container_name: cadvisor
     hostname: cadvisor
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
     network_mode: "host"
     ports:
       - "8080:8080"
     command:
       - '-port=8098'
     volumes: 
-      - "/:/rootfs"
-      - "/var/run:/var/run"
-      - "/sys:/sys"
-      - "/var/lib/docker/:/var/lib/docker"
-      - "/dev/disk/:/dev/disk"
-      - "/cgroup:/cgroup:ro"
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - /cgroup:/cgroup:ro
     devices: 
       - "/dev/kmsg"
     labels:

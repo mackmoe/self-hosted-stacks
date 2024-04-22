@@ -11,7 +11,7 @@ _meta:
 ## Demo users
 
 admin:
-  hash: "$2y$12$K/SpwjtB.wOHJ/Nc6GVRDuc1h0rM1DfvziFRNPtk27P.c4yDr9njO"
+  hash: "$2y$12$1BYrodEgCHx3.fk3afzj7e2pCX5XmXyPhGWPN4E6iTnNuuSZY4lYG"
   reserved: true
   backend_roles:
   - "admin"
@@ -54,3 +54,10 @@ snapshotrestore:
   backend_roles:
   - "snapshotrestore"
   description: "Demo snapshotrestore user"
+
+monash:
+  hash: "$2y$12$DRzLT9Ct0RnxP5sS5w5Jf.HQAjI4B5Muygo6IEDCPz60/c7fvg3RW"
+  reserved: false
+  backend_roles:
+  - "admin"
+  description: "My admin user"
