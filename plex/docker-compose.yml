@@ -50,7 +50,7 @@ services:
       - 192.168.50.234::32414/udp
     restart: unless-stopped
     labels:
-      org.label-schema.group: "ums-svcs"
+      org.label-schema.group: "ums"
       com.centurylinklabs.watchtower.enable: "true"
       # traefik.enable: "false"
       # traefik.port: "32400"

@@ -27,4 +27,5 @@ services:
     pull_policy: build
     deploy:
       labels:
-        com.example.description: "ums-svcs"
+        com.example.description: "ums"
+        com.centurylinklabs.watchtower.enable: "true"

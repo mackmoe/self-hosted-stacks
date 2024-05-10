@@ -32,3 +32,4 @@ services:
     restart: always
     labels:
       org.label-schema.group: "automation"
+      com.centurylinklabs.watchtower.enable: "true"

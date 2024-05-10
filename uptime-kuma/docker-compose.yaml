@@ -16,6 +16,7 @@ services:
     restart: always
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
 
 volumes:
   uptime-kuma_data: {}

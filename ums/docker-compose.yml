@@ -39,7 +39,8 @@ services:
     ports:
       - 7878:7878/tcp # The port for the Radarr webinterface
     labels:
-      org.label-schema.group: "ums-stack"
+      org.label-schema.group: "ums"
+      com.centurylinklabs.watchtower.enable: "true"
   sonarr:
     image: linuxserver/sonarr
     privileged: true
@@ -65,7 +66,8 @@ services:
     ports:
       - 8989:8989/tcp # Web UI
     labels:
-      org.label-schema.group: "ums-stack"
+      org.label-schema.group: "ums"
+      com.centurylinklabs.watchtower.enable: "true"
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
     privileged: true
@@ -89,7 +91,8 @@ services:
       - 9696:9696
     restart: unless-stopped
     labels:
-      org.label-schema.group: "ums-stack"
+      org.label-schema.group: "ums"
+      com.centurylinklabs.watchtower.enable: "true"
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr
     container_name: ums-flaresolverr
@@ -104,4 +107,5 @@ services:
       - "${PORT:-8191}:8191"
     restart: unless-stopped
     labels:
-      org.label-schema.group: "ums-stack"
+      org.label-schema.group: "ums"
+      com.centurylinklabs.watchtower.enable: "true"

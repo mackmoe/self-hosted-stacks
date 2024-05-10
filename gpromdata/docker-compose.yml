@@ -28,6 +28,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   telegraf:
     image: telegraf  #:1.25-alpine
     depends_on:
@@ -40,6 +41,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   loki:
     image: grafana/loki
     container_name: loki
@@ -54,6 +56,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   promtail:
     image: grafana/promtail
     container_name: promtail
@@ -71,6 +74,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   ping:
     tty: true
     stdin_open: true
@@ -88,6 +92,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   speedtest:
     tty: true
     stdin_open: true
@@ -101,6 +106,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   netdata:
     image: netdata/netdata:stable
     privileged: true
@@ -133,6 +139,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -158,6 +165,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   grafana:
     image: grafana/grafana:latest
     env_file: configuration.env
@@ -179,6 +187,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.1
     container_name: cadvisor
@@ -198,6 +207,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   nodeexporter:
     image: prom/node-exporter
     container_name: nodeexporter
@@ -219,6 +229,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   pushgateway:
     image: prom/pushgateway:latest
     container_name: pushgateway
@@ -229,6 +240,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   alertmanager:
     image: prom/alertmanager
     container_name: alertmanager
@@ -244,6 +256,7 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
   caddy:
     image: caddy:2.6.4
     container_name: caddy
@@ -265,3 +278,4 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"

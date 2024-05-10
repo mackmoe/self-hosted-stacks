@@ -13,6 +13,7 @@ services:
     labels:
       icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
       org.label-schema.group: mgmt-ui
+      com.centurylinklabs.watchtower.enable: "true"
     ports:
       - mode: ingress
         target: 9000
@@ -49,6 +50,7 @@ services:
     labels:
       icon: https://linuxiac.b-cdn.net/wp-content/uploads/2023/06/portainer.jpg
       org.label-schema.group: mgmt-ui
+      com.centurylinklabs.watchtower.enable: "true"
     privileged: true
     restart: always
     volumes:
