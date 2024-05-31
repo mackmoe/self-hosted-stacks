@@ -19,20 +19,19 @@ services:
   influxdb:
     image: influxdb  #:2.6-alpine
     container_name: influxdb
-    env_file:
-      - configuration.env
+    restart: unless-stopped
+    env_file: configuration.env
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=${INFLUXDB_MODE}
-      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
-      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
-      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_ADMIN_TOKEN}
+      - DOCKER_INFLUXDB_INIT_MODE=$INFLUXDB_MODE
+      - DOCKER_INFLUXDB_INIT_USERNAME=$INFLUXDB_USERNAME
+      - DOCKER_INFLUXDB_INIT_PASSWORD=$INFLUXDB_PASSWORD
+      - DOCKER_INFLUXDB_INIT_ORG=$INFLUXDB_ORG
+      - DOCKER_INFLUXDB_INIT_BUCKET=$INFLUXDB_BUCKET
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=$INFLUXDB_ADMIN_TOKEN
     volumes:
       - influxdb_data:/var/lib/influxdb2
     expose:
       - 8086
-      - 9094
     networks:
       - monitor-net
     labels:
@@ -40,11 +39,12 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
   telegraf:
     image: telegraf  #:1.25-alpine
+    restart: unless-stopped
     container_name: telegraf
     links:
       - influxdb
     volumes:
-      - ./influxdb/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
     env_file:
       - configuration.env
     expose:
@@ -60,6 +60,7 @@ services:
   loki:
     image: grafana/loki
     container_name: loki
+    restart: unless-stopped
     expose:
       - 3100
     command: -config.file=/etc/loki/config.yml
@@ -114,7 +115,11 @@ services:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
   grafana:
-    image: grafana/grafana:latest/:/rootfs:ro:8086:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
@@ -206,7 +211,6 @@ services:
       - "8080:8080"
       - "8086:8086"
       - "9090:9090"
-      - "9094:9094"
       - "9080:9080"
       - "9091:9091"
       - "9100:9100"
