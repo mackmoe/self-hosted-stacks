@@ -25,7 +25,7 @@ services:
       - influxdb_data:/var/lib/influxdb2
     expose:
       - 8086
-      - 9999
+      - 9094
     networks:
       - monitor-net
     labels:
@@ -204,6 +204,7 @@ services:
       - "8080:8080"
       - "8086:8086"
       - "9090:9090"
+      - "9094:9094"
       - "9080:9080"
       - "9091:9091"
       - "9100:9100"
