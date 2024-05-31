@@ -18,16 +18,16 @@ volumes:
 services:
   influxdb:
     image: influxdb  #:2.6-alpine
+    env_file: .env
     container_name: influxdb
     restart: unless-stopped
-    env_file: configuration.env
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=${INFLUXDB_MODE:-default}
-      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME:-default}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD:-default}
-      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG:-default}
-      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET:-default}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_ADMIN_TOKEN:-default}
+      - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
     volumes:
       - influxdb_data:/var/lib/influxdb2
     expose:
@@ -37,6 +37,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   telegraf:
     image: telegraf  #:1.25-alpine
     restart: unless-stopped
@@ -44,19 +45,18 @@ services:
     links:
       - influxdb
     volumes:
-      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-    env_file:
-      - configuration.env
+      - ./influxdb/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    env_file: .env
     expose:
       - 8125
       - 8092
       - 8094
-
     networks:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   loki:
     image: grafana/loki
     container_name: loki
@@ -71,6 +71,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   promtail:
     image: grafana/promtail
     container_name: promtail
@@ -91,6 +92,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -114,6 +116,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -122,12 +125,10 @@ services:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
-    links:
-      - influxdb
     expose:
       - 3000
     networks:
