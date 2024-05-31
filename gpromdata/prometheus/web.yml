@@ -2,4 +2,3 @@
 # server via basic authentication. If empty, no basic authentication is
 # required. Passwords are hashed with bcrypt.
 basic_auth_users:
-  admin: $2b$12$1uSo8TWHBb3YSQj5BDRsn.ags9d7Vrh8zjXz/BI9o6MkUmcymcida

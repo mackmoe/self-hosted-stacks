@@ -1,7 +1,7 @@
 # Title:
 # Description:
 # Icon URL: 
-version: '2.1'
+version: '3.8'
 
 networks:
   monitor-net:
@@ -10,7 +10,7 @@ networks:
 volumes:
     prometheus_data: {}
     grafana_data: {}
-    influxdbv2: {}
+    influxdb_data: {}
     netdata_config: {}
     netdata_lib: {}
     netdata_cache: {}
@@ -21,9 +21,9 @@ services:
     env_file:
       - configuration.env
     volumes:
-      - influxdbv2:/var/lib/influxdb2:rw
-    ports:
-      - "8086:8086"
+      - influxdb_data:/var/lib/influxdb2
+    expose:
+      - 8086
     networks:
       - monitor-net
     labels:
@@ -37,6 +37,11 @@ services:
       - ./influxdb/telegraf.conf:/etc/telegraf/telegraf.conf:ro
     env_file:
       - configuration.env
+    expose:
+      - 8125
+      - 8092
+      - 8094
+
     networks:
       - monitor-net
     labels:
@@ -47,8 +52,6 @@ services:
     container_name: loki
     expose:
       - 3100
-    ports:
-      - "3100:3100"
     command: -config.file=/etc/loki/config.yml
     volumes:
       - ./loki/loki-config.yml:/etc/loki/config.yml
@@ -62,6 +65,8 @@ services:
     container_name: promtail
     privileged: true
     pid: "host"
+    links:
+      - loki
     command: 
       - "-config.file=/etc/promtail/config.yml"
       - "-config.expand-env=true"
@@ -70,71 +75,6 @@ services:
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml
     expose:
       - 9080
-    networks:
-      - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
-      com.centurylinklabs.watchtower.enable: "true"
-  ping:
-    tty: true
-    stdin_open: true
-    expose:
-      - 9115
-    ports:
-      - 9115:9115
-    image: prom/blackbox-exporter
-    restart: always
-    volumes:
-      - ./blackbox/blackbox.yml:/config/blackbox.yml
-    command:
-      - '--config.file=/config/blackbox.yml'
-    networks:
-      - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
-      com.centurylinklabs.watchtower.enable: "true"
-  speedtest:
-    tty: true
-    stdin_open: true
-    expose:
-      - 9798
-    ports:
-      - 9798:9798
-    image: miguelndecarvalho/speedtest-exporter
-    restart: always
-    networks:
-      - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
-      com.centurylinklabs.watchtower.enable: "true"
-  netdata:
-    image: netdata/netdata:stable
-    privileged: true
-    pid: "host"
-    container_name: netdata
-    hostname: netdata.molovestoshare.com # set to fqdn of host
-    ports:
-      - 19999:19999
-    restart: unless-stopped
-    cap_add:
-      - SYS_PTRACE
-      - SYS_ADMIN
-    security_opt:
-      - apparmor:unconfined
-    volumes:
-      - netdata_config:/etc/netdata
-      - netdata_lib:/var/lib/netdata
-      - netdata_cache:/var/cache/netdata
-      - /etc/passwd:/host/etc/passwd:ro
-      - /etc/group:/host/etc/group:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /etc/os-release:/host/etc/os-release:ro
-    environment:
-      - PGID=998
-      - NETDATA_CLAIM_TOKEN=7eJvVZzOwbJl7lBMOVh8TvJHzHjUR9xpcdhGNGM0-7VdzfCuqA3XJqp18fNTd8v_W0Sq6YR7BUn3T1B1hyVHXXxPw9XT5COAPY6W7mg5C_m3fU1RMd0Rk0W7pZRyC3JlnQ_X7iE
-      - NETDATA_CLAIM_URL=https://app.netdata.cloud
-      - NETDATA_CLAIM_ROOMS=
     networks:
       - monitor-net
     labels:
@@ -156,11 +96,8 @@ services:
       - '--web.enable-admin-api'
       - '--web.enable-lifecycle' # To enable the Prometheus /-/reload HTTP endpoint - automatically reload your Prometheus config when it changes
     restart: unless-stopped
-    links:
-      - ping:ping
-      - speedtest:speedtest
     expose:
-      - 9090
+      - 9190:9090
     networks:
       - monitor-net
     labels:
@@ -175,8 +112,8 @@ services:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     environment:
-      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
     links:
@@ -219,9 +156,7 @@ services:
       - '--path.procfs=/host/proc'
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-      # - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     restart: unless-stopped
     expose:
       - 9100
@@ -262,18 +197,55 @@ services:
     container_name: caddy
     ports:
       - "3000:3000"
+      - "3100:3100"
       - "8080:8080"
+      - "8086:8086"
       - "9090:9090"
       - "9080:9080"
       - "9091:9091"
       - "9100:9100"
+      - "8125:8125"
+      - "8092:8092"
+      - "8094:8094"
     volumes:
       - ./caddy:/etc/caddy
     environment:
-      - ADMIN_USER=${ADMIN_USER:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:-$2a$14$1l.IozJx7xQRVmlkEQ32OeEEfP5mRxTpbDTCTcXRqn19gXD8YK1pO}
+      - ADMIN_USER=${CADDY_ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${CADDY_ADMIN_PASSWORD:-admin}
+      - ADMIN_PASSWORD_HASH=${CADDY_ADMIN_PASSWORD_HASH:-$2a$14$1l.IozJx7xQRVmlkEQ32OeEEfP5mRxTpbDTCTcXRqn19gXD8YK1pO}
     restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
+  netdata:
+    image: netdata/netdata:stable
+    privileged: true
+    pid: "host"
+    container_name: netdata
+    expose:
+      - 19999:19999
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - netdata_config:/etc/netdata
+      - netdata_lib:/var/lib/netdata
+      - netdata_cache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+    environment:
+      - PGID=998
+      # - NETDATA_CLAIM_TOKEN=7eJvVZzOwbJl7lBMOVh8TvJHzHjUR9xpcdhGNGM0-7VdzfCuqA3XJqp18fNTd8v_W0Sq6YR7BUn3T1B1hyVHXXxPw9XT5COAPY6W7mg5C_m3fU1RMd0Rk0W7pZRyC3JlnQ_X7iE
+      # - NETDATA_CLAIM_URL=https://app.netdata.cloud
+      # - NETDATA_CLAIM_ROOMS=
     networks:
       - monitor-net
     labels:

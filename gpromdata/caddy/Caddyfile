@@ -13,7 +13,7 @@
     basicauth /* {
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }    
-    reverse_proxy cadvisor:8080
+    reverse_proxy influxdb:8086
 }
 
 :9090 {
@@ -35,4 +35,11 @@
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }    
     reverse_proxy pushgateway:9091
+}
+
+:19999 {
+    basicauth /* {
+        {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
+    }    
+    reverse_proxy netdata:19999
 }

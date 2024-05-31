@@ -1,6 +1,7 @@
 global:
-  scrape_interval:     15s
-  evaluation_interval: 15s
+  scrape_interval:     5s
+  scrape_timeout:     2s
+  evaluation_interval: 5s
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
@@ -9,7 +10,8 @@ global:
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
-  - "alert.rules"
+  - ./alert.rules
+  - "rules/alert.yml"
 
 # A scrape configuration containing exactly one endpoint to scrape.
 scrape_configs:
@@ -48,6 +50,21 @@ scrape_configs:
     static_configs:
     - targets: ['healthchecks.io']
 
+  - job_name: 'blackbox-http(s)'
+    metrics_path: /probe
+    params:
+      module: [ http_2xx ]
+    static_configs:
+    - targets:
+      - localhost:9090
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: jumpbox:9090
+  
   - job_name: 'speedtest'
     metrics_path: /metrics
     scrape_interval: 5m
