@@ -13,7 +13,7 @@
     basicauth /* {
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }    
-    reverse_proxy influxdb:8086
+    reverse_proxy influxdb:8096
 }
 
 :9090 {

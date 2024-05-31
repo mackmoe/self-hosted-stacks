@@ -34,4 +34,4 @@ receivers:
         send_resolved: true
         username: 'Prometheus'
         text: '{{ .CommonAnnotations.description }}'
-        api_url: 'https://hooks.slack.com/services/<webhook-id>'
+        api_url: '{{ .CommonLabels.slack_api_url }}'

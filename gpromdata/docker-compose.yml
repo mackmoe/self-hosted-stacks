@@ -18,12 +18,14 @@ volumes:
 services:
   influxdb:
     image: influxdb  #:2.6-alpine
+    container_name: influxdb
     env_file:
       - configuration.env
     volumes:
       - influxdb_data:/var/lib/influxdb2
     expose:
       - 8086
+      - 9999
     networks:
       - monitor-net
     labels:
@@ -31,6 +33,7 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
   telegraf:
     image: telegraf  #:1.25-alpine
+    container_name: telegraf
     depends_on:
       - influxdb
     volumes:
@@ -207,6 +210,7 @@ services:
       - "8125:8125"
       - "8092:8092"
       - "8094:8094"
+      - "9999:9999"
     volumes:
       - ./caddy:/etc/caddy
     environment:
