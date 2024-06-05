@@ -37,12 +37,15 @@ services:
       - TZ=America/Chicago
       - DOCKER_MODS=ghcr.io/themepark-dev/theme.park:deluge
       - TP_COMMUNITY_THEME=true
-      - TP_THEME=onedark
+        #- TP_THEME=onedark
+      - TP_THEME=organizr
     volumes:
       - deluge_data:/config
       - /mnt/tf_nfsdisk/Media/downloads:/downloads
     network_mode: service:wireguard
     restart: unless-stopped
+    depends_on:
+      - wireguard
     labels:
       org.label-schema.group: "ums"
       com.centurylinklabs.watchtower.enable: "true"
