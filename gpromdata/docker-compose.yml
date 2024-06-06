@@ -1,6 +1,6 @@
-# Title:
-# Description:
-# Icon URL: 
+# Title: gpromdata
+# Description: Crazy ass monitoring stack
+# Icon URL: https://blog.knoldus.com/wp-content/uploads/2020/06/feature-image-prometheus.png
 version: '3.8'
 
 networks:
@@ -10,7 +10,6 @@ networks:
 volumes:
     prometheus_data: {}
     grafana_data: {}
-    influxdb_data: {}
     netdata_config: {}
     netdata_lib: {}
     netdata_cache: {}
@@ -22,16 +21,23 @@ services:
     container_name: influxdb
     restart: unless-stopped
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE}
-      - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD}
-      - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG}
-      - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+      - INFLUX_CONFIGS_PATH=${INFLUX_CONFIGS_PATH}
+      # - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE}
+      # - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
+      # - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD}
+      # - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG}
+      # - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET}
+      # - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+    command:
+      - '--username ${DOCKER_INFLUXDB_INIT_USERNAME}'
+      - '--password ${DOCKER_INFLUXDB_INIT_PASSWORD}'
+      - '--org ${DOCKER_INFLUXDB_INIT_ORG}'
+      - '--bucket ${DOCKER_INFLUXDB_INIT_BUCKET}'
     volumes:
-      - influxdb_data:/var/lib/influxdb2
-    expose:
-      - 8086
+      - "$PWD/data:/var/lib/influxdb2"
+      - "$PWD/config:/etc/influxdb2"
+    ports:
+      - 8086:8086
     networks:
       - monitor-net
     labels:
@@ -42,11 +48,11 @@ services:
     image: telegraf  #:1.25-alpine
     restart: unless-stopped
     container_name: telegraf
+    env_file: .env
     links:
       - influxdb
     volumes:
-      - ./influxdb/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-    env_file: .env
+      - "./telegraf/telegraph.conf:/etc/telegraf/telegraf.conf"
     expose:
       - 8125
       - 8092
@@ -61,8 +67,8 @@ services:
     image: grafana/loki
     container_name: loki
     restart: unless-stopped
-    expose:
-      - 3100
+    ports:
+      - 3100:3100
     command: -config.file=/etc/loki/config.yml
     volumes:
       - ./loki/loki-config.yml:/etc/loki/config.yml
@@ -109,7 +115,7 @@ services:
       - '--web.enable-admin-api'
       - '--web.enable-lifecycle' # To enable the Prometheus /-/reload HTTP endpoint - automatically reload your Prometheus config when it changes
     restart: unless-stopped
-    expose:
+    ports:
       - 9190:9090
     networks:
       - monitor-net
@@ -129,13 +135,14 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
-    expose:
-      - 3000
+    ports:
+      - 3000:3000
     networks:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.1
     container_name: cadvisor
@@ -149,13 +156,16 @@ services:
       - /var/lib/docker:/var/lib/docker:ro
       #- /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
     restart: unless-stopped
-    expose:
-      - 8080
+    command:
+      - '--port=8081'
+    ports:
+      - 8081:8081
     networks:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   nodeexporter:
     image: prom/node-exporter
     container_name: nodeexporter
@@ -176,6 +186,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   pushgateway:
     image: prom/pushgateway:latest
     container_name: pushgateway
@@ -187,6 +198,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
+  
   alertmanager:
     image: prom/alertmanager
     container_name: alertmanager
@@ -203,34 +215,36 @@ services:
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"
-  caddy:
-    image: caddy:2.6.4
-    container_name: caddy
-    ports:
-      - "3000:3000"
-      - "3100:3100"
-      - "8080:8080"
-      - "8086:8086"
-      - "9090:9090"
-      - "9080:9080"
-      - "9091:9091"
-      - "9100:9100"
-      - "8125:8125"
-      - "8092:8092"
-      - "8094:8094"
-      - "9999:9999"
-    volumes:
-      - ./caddy:/etc/caddy
-    environment:
-      - ADMIN_USER=${CADDY_ADMIN_USER:-admin}
-      - ADMIN_PASSWORD=${CADDY_ADMIN_PASSWORD:-admin}
-      - ADMIN_PASSWORD_HASH=${CADDY_ADMIN_PASSWORD_HASH:-$2a$14$1l.IozJx7xQRVmlkEQ32OeEEfP5mRxTpbDTCTcXRqn19gXD8YK1pO}
-    restart: unless-stopped
-    networks:
-      - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
-      com.centurylinklabs.watchtower.enable: "true"
+  
+  # caddy:
+  #   image: caddy:2.6.4
+  #   container_name: caddy
+  #   ports:
+  #     - "3000:3000"
+  #     - "3100:3100"
+  #     - "8080:8080"
+  #     - "8086:8086"
+  #     - "9090:9090"
+  #     - "9080:9080"
+  #     - "9091:9091"
+  #     - "9100:9100"
+  #     - "8125:8125"
+  #     - "8092:8092"
+  #     - "8094:8094"
+  #     - "9999:9999"
+  #   volumes:
+  #     - ./caddy:/etc/caddy
+  #   environment:
+  #     - ADMIN_USER=${CADDY_ADMIN_USER:-admin}
+  #     - ADMIN_PASSWORD=${CADDY_ADMIN_PASSWORD:-admin}
+  #     - ADMIN_PASSWORD_HASH=${CADDY_ADMIN_PASSWORD_HASH:-$2a$14$1l.IozJx7xQRVmlkEQ32OeEEfP5mRxTpbDTCTcXRqn19gXD8YK1pO}
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitor-net
+  #   labels:
+  #     org.label-schema.group: "monitoring"
+  #     com.centurylinklabs.watchtower.enable: "true"
+  
   netdata:
     image: netdata/netdata:stable
     privileged: true

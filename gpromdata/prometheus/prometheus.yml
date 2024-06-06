@@ -54,6 +54,14 @@ scrape_configs:
     static_configs:
       - targets: ['influxdb:8086']
 
+  - job_name: loki_ptail_job
+    scrape_interval: 59s
+    static_configs:
+      - targets: ['caddy:2019']
+        labels:
+          job: loki_ptail_job
+          __path__: /var/log/*/*.log
+
 alerting:
   alertmanagers:
   - scheme: http
