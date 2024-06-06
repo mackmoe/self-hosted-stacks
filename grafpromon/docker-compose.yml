@@ -13,6 +13,38 @@ volumes:
   prom_data: {}
 
 services:
+  loki:
+    image: grafana/loki
+    container_name: loki
+    restart: unless-stopped
+    ports:
+      - 3100
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/config.yml
+    labels:
+      org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
+  
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    privileged: true
+    pid: "host"
+    links:
+      - loki
+    command: 
+      - "-config.file=/etc/promtail/config.yml"
+      - "-config.expand-env=true"
+    volumes:
+      - /var/log:/var/log:ro
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+    ports:
+      - 9080
+    labels:
+      org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -88,6 +120,16 @@ services:
       - /:/host:ro,rslave
       - /sys:/host/sys:ro,rslave
       - /proc:/host/proc:ro,rslave
+    labels:
+      org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
+
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: pushgateway
+    restart: unless-stopped
+    expose:
+      - 9091
     labels:
       org.label-schema.group: "monitoring"
       com.centurylinklabs.watchtower.enable: "true"  

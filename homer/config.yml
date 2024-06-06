@@ -1,0 +1,182 @@
+---
+# Homepage configuration
+# See https://fontawesome.com/v5/search for icons options
+
+header: true
+
+title: "Dashboard"
+logo: "logo.png"
+subtitle: "DHCP Jumpbox"
+#icon: "fas fa-skull-crossbones" # Optional icon
+
+footer: '<p><a>All dashboard icons references can be found on font-awseome <a href="https://fontawesome.com/search?m=free&o=r"><i class="fa-solid fa-crown"></i></p></a>' # set false if you want to hide it.
+
+
+# Optional theme customization
+theme: default
+colors:
+  light:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#f5f5f5"
+    card-background: "#ffffff"
+    text: "#363636"
+    text-header: "#ffffff"
+    text-title: "#303030"
+    text-subtitle: "#424242"
+    card-shadow: rgba(0, 0, 0, 0.1)
+    link: "#3273dc"
+    link-hover: "#363636"
+  dark:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#131313"
+    card-background: "#2b2b2b"
+    text: "#eaeaea"
+    text-header: "#ffffff"
+    text-title: "#fafafa"
+    text-subtitle: "#f5f5f5"
+    card-shadow: rgba(0, 0, 0, 0.4)
+    link: "#3273dc"
+    link-hover: "#ffdd57"
+
+# Optional message
+message:
+  url: https://b4bz.io
+  style: "is-dark" # See https://bulma.io/documentation/components/message/#colors for styling options.
+  title: ""
+  icon: "fa-solid fa-grip"
+  content: "This dashboard links to some common CVAH tools, apps and other useful resources for DEVs that are only accessable via SIL infrastructure. <br />Instructions on how to update this dashboard can be found in the <a href='https://github.com/bastienwirtz/homer/blob/main/docs/configuration.md'>docs</a> on GitHub."
+
+# Optional navbar
+links: [] # Allows for navbar dark mode, layout, and search (without) any links
+
+# Services
+# First level array represent a group. Ex.
+# - name: "Portainer"
+        # icon: ""
+        # logo: "fas fa-"
+        # subtitle: ""
+        # tag: ""
+        # keywords: ""
+        # url: ""
+        # target: "_blank"
+# Leave only a "items" key if not using group (group name, icon & tagstyle are optional, section separation will not be displayed).
+services:
+  - name: "Jumpbox Applications"
+    icon: "fa-brands fa-app-store-ios"
+    items:
+      - name: "Portainer"
+        icon: "fas fa-landmark"
+        # logo: "assets/tools/sample.png"
+        subtitle: "Bookmark example"
+        tag: "app"
+        keywords: "self hosted portainer"
+        url: "https://jumpbox:9443/"
+        target: "_blank" # optional html a tag target attribute
+      - name: "Grafana"
+        icon: "fas fa-sun"
+        # logo: "assets/tools/sample2.png"
+        subtitle: "Another application"
+        tag: "app"
+        url: http://jumpbox:3000/login
+      - name: "Prometheus"
+        icon: "fas fa-fire"
+        # logo: "assets/tools/sample2.png"
+        subtitle: "Another application"
+        tag: "app"
+        url: http://jumpbox:9190/
+        target: "_blank"
+      - name: "Flux"
+        icon: "fas fa-database"
+        # logo: "assets/tools/sample2.png"
+        subtitle: "Another application"
+        tag: "app"
+        url: "http://jumpbox:8086/"
+        target: "_blank"
+
+  - name: "Deployed Kits"
+    icon: "fa-solid fa-cubes"
+    items:
+      - name: "Default Controller Domain"
+        icon: "fa-solid fa-server"
+        subtitle: "Default kit domain.lan"
+        url: "https://controller.lan"
+        target: "_blank"
+        tag: "dedployed-kits"
+      - name: "Kit 100 - Daily Builds"
+        icon: "fa-solid fa-server"
+        subtitle: "Daily build of devel"
+        url: "https://controller.k100daily"
+        target: "_blank"
+        tag: "dedployed-kits"
+      - name: "Kit 200- Manual Deployments"
+        icon: "fa-solid fa-server"
+        tag: "dedployed-kits"
+        subtitle: "Manual Kit Deployments"
+        url: "https://controller.kit200"
+        target: "_blank"
+      - name: "Kit 300 - Pipeline Deployments"
+        icon: "fa-solid fa-server"
+        tag: "dedployed-kits"
+        target: "_blank"
+        subtitle: "Kits deployed via pipeline"
+        url: "https://controller.kit300-pipeline"
+        
+  - name: "Sil Resources"
+    icon: "fa-solid fa-rocket"
+    items:
+      - name: "CVAH GitLab Repo"
+        icon: "fab fa-gitlab"
+        # logo: "assets/tools/gitlab-logo.png"
+        url: "https://gitlab.sil.lab/"
+        tag: "SILresources"
+        target: "_blank" # optional html a tag target attribute
+      - name: "SIL vSphere"
+        icon: "fa-solid fa-cloud"
+        subtitle: "SIL vSphere Login"
+        url: "https://mpls-vm-vcsa01.sil.lab/ui"
+        tag: "SILresources"
+      - name: "Sil Status"
+        icon: "fa-solid fa-check"
+        # logo: "assets/tools/status.png"
+        tag: "SILresources"
+        subtitle: "Health & Monitoring"
+        url: "http://status.sil.lab/"
+        target: "_blank"
+      - name: "Nexus"
+        icon: "fa-solid fa-box-open"
+        tag: "SILresources"
+        subtitle: "Package Repository"
+        url: "https://nexus.sil.lab/"
+
+  - name: "Jumpbox Quick Links"
+    icon: "fas fa-tools"
+    items:
+      - name: "Slack Channels"
+        icon: "fab fa-slack"
+        url: "https://aftechenthusiasts.slack.com/team/U01409362JF"
+        keywords: "slack chat"
+        tag: "webapp"
+        target: "_blank" # optional html a tag target attribute
+      - name: "Teams Channels"
+        icon: "fas fa-users"
+        url: "https://dod.teams.microsoft.us/_#/conversations/Dev%20Team%201?threadId=19:dod:791aa8dfe0ae4697b536029cd6ad6ca8@thread.tacv2&ctx=channel"
+        keywords: "teams chat"
+        tag: "webapp"
+        target: "_blank" # optional html a tag target attribute
+
+  - name: "Atlassian Resources"
+    icon: "fa-solid fa-rocket"
+    items:
+      - name: "Jira"
+        icon: "fa-solid fa-bug"
+        subtitle: "Jira Login"
+        url: "https://jira.levelup.cce.af.mil/"
+      - name: "Confluence"
+        subtitle: "Confluence Login"
+        icon: "fas fa-book"
+        url: "https://confluence.levelup.cce.af.mil/"
+

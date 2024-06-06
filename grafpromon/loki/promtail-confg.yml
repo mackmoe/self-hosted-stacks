@@ -8,4 +8,4 @@ scrape_configs:
           - localhost
         labels:
           job: loki_ptail_job
-          __path__: /var/log/*
+          __path__: /var/log/*/*.log

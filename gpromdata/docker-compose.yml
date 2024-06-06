@@ -22,6 +22,7 @@ services:
     restart: unless-stopped
     environment:
       - INFLUX_CONFIGS_PATH=${INFLUX_CONFIGS_PATH}
+      #- DOCKER_INFLUXDB_INIT_RETENTION=0
       # - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE}
       # - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
       # - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD}
@@ -29,13 +30,13 @@ services:
       # - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET}
       # - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
     command:
-      - '--username ${DOCKER_INFLUXDB_INIT_USERNAME}'
-      - '--password ${DOCKER_INFLUXDB_INIT_PASSWORD}'
-      - '--org ${DOCKER_INFLUXDB_INIT_ORG}'
-      - '--bucket ${DOCKER_INFLUXDB_INIT_BUCKET}'
+      # - '--username ${DOCKER_INFLUXDB_INIT_USERNAME}'
+      # - '--password ${DOCKER_INFLUXDB_INIT_PASSWORD}'
+      # - '--org ${DOCKER_INFLUXDB_INIT_ORG}'
+      # - '--bucket ${DOCKER_INFLUXDB_INIT_BUCKET}'
     volumes:
-      - "$PWD/data:/var/lib/influxdb2"
-      - "$PWD/config:/etc/influxdb2"
+      - ./influxdb/data:/var/lib/influxdb2
+      - ./influxdb/config:/etc/influxdb2
     ports:
       - 8086:8086
     networks:
@@ -53,10 +54,10 @@ services:
       - influxdb
     volumes:
       - "./telegraf/telegraph.conf:/etc/telegraf/telegraf.conf"
-    expose:
-      - 8125
-      - 8092
-      - 8094
+    ports:
+      - :8125
+      - :8092
+      - :8094
     networks:
       - monitor-net
     labels:
@@ -91,8 +92,8 @@ services:
     volumes:
       - /var/log:/var/log:ro
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml
-    expose:
-      - 9080
+    ports:
+      - :9080
     networks:
       - monitor-net
     labels:
@@ -179,8 +180,8 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     restart: unless-stopped
-    expose:
-      - 9100
+    ports:
+      - :9100
     networks:
       - monitor-net
     labels:
@@ -191,8 +192,8 @@ services:
     image: prom/pushgateway:latest
     container_name: pushgateway
     restart: unless-stopped
-    expose:
-      - 9091
+    ports:
+      - :9091
     networks:
       - monitor-net
     labels:
@@ -208,8 +209,8 @@ services:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
     restart: unless-stopped
-    expose:
-      - 9093
+    ports:
+      - :9093
     networks:
       - monitor-net
     labels:
@@ -250,7 +251,7 @@ services:
     privileged: true
     pid: "host"
     container_name: netdata
-    expose:
+    ports:
       - 19999:19999
     restart: unless-stopped
     cap_add:
