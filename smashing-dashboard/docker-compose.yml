@@ -1,0 +1,29 @@
+# Title: smashing
+# Description: Smashing, the spiritual successor to Dashing, is a Sinatra based framework that lets you build excellent dashboards. It looks especially great on TVs.. 
+# Icon URL: https://apps-cdn.athom.com/app/io.olae.smashing/3/8dc2f9cd-8d7f-404a-99a6-49127d3d2f7d/drivers/dashboard/assets/images/large.png
+version: "3"
+services:
+  smashing_dashboard:
+    image: visibilityspots/smashing
+    container_name: smashing-dash
+    hostname: smashing
+    environment:
+      - WIDGETS=5641535 # To install custom widgets supply the gist IDs of the widgets as an environment variable
+      - GEMS=instagram  # To install gems, supply the gem name(s) as an environment variable. Multiple gems and widgets can be supplied like so: GEMS="mysql instagram"
+      - TZ="America/Chicago"
+    ports:
+      - 8080:3030
+    volumes:
+      - ./custom/dashboards:/dashboards
+      - ./custom/jobs:/jobs
+    cap_add:
+      - ALL
+    privileged: true
+    restart: unless-stopped
+    labels:
+      org.label-schema.group: "dashboard"
+      com.centurylinklabs.watchtower.enable: "true"
+      # traefik.enable: "false"
+      # traefik.port: "3000"
+      # traefik.frontend.rule: "Host:$HOST-cadvisor.molovestoshare.com"
+      # traefik.backend: grafpromon

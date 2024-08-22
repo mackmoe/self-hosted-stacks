@@ -31,3 +31,4 @@ my.cnf
 /authelia*
 
 /monash-docker-workspace.code-workspace
+smashing-dashboard/custom/*
