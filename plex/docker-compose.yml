@@ -12,7 +12,7 @@ volumes:
 services:
   plex:
     privileged: true
-    image: lscr.io/linuxserver/plex
+    image: linuxserver/plex
     container_name: ums-plex
     hostname: ums-plex
     domainname: plex.molovestoshare.com
