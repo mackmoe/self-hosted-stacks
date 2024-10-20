@@ -28,7 +28,7 @@ services:
       - DOCKER_MODS=ghcr.io/gilbn/theme.park:plex
       - TP_COMMUNITY_THEME=true
       - TP_THEME=onedark #overseerr - case sensitive Infinity Stone Themes: mind (yellow), reality (red), space (blue), soul (orange), power (purple),time (green), ibracorp 
-      - PLEX_CLAIM=claim-SzzWyqu6FSQvsshhhHNV # Generate new claim codes here: https://www.plex.tv/claim/
+      #- PLEX_CLAIM=claim-SzzWyqu6FSQvsshhhHNV # Generate new claim codes here: https://www.plex.tv/claim/
     volumes:
       - /tmp:/transcodes
       - /dev/dri/renderD128:/dev/dri/renderD128
