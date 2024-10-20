@@ -34,7 +34,7 @@ services:
       - /dev/dri/renderD128:/dev/dri/renderD128
       - /dev/dri/card0:/dev/dri/card0
       - plex_data:/config
-      - '/mnt/Media/TV Shows:/TV Shows'
+      - /mnt/Media/TV-Shows:/TV Shows
       - /mnt/Media/Movies:/Movies
     network_mode: host
     ports:
