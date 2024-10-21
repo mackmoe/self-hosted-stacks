@@ -28,10 +28,10 @@ services:
       - /etc/os-release:/host/etc/os-release:ro
       - /var/log:/host/var/log:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      org.label-schema.group: "monitoring"
+      com.centurylinklabs.watchtower.enable: "true"
 volumes:
     netdataconfig: {}
     netdatalib: {}
     netdatacache: {}
-labels:
-   org.label-schema.group: "monitoring"
-   com.centurylinklabs.watchtower.enable: "true"
