@@ -10,13 +10,13 @@ services:
     container_name: homer
     hostname: homer
     environment:
-      - INIT_ASSETS=1 # default
+      - INIT_ASSETS=1 # default 0
       - TZ=America/Chicago
-      - PORT=3380
+      - PORT=8080
     volumes:
       - container_data:/www/assets
     ports:
-      - 34250:3380
+      - 8080:8080
     user: 1000:1000 # 1000 default
     restart: always
   
