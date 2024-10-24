@@ -1,0 +1,5 @@
+<!-- This file needs to be placed in /opt with name Caddyfile. Here you customize your domain, and you need to provide your email address to obtain a Let's Encrypt certificate. Certificate renewal will happen automatically and will be executed internally by the caddy server. -->
+netdata.example.org {
+  reverse_proxy host.docker.internal:19999
+  tls admin@example.org
+}
