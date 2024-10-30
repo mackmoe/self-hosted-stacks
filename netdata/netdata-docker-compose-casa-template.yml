@@ -1,0 +1,109 @@
+name: netdata
+services:
+  netdata:
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    container_name: tc-netdata
+    image: netdata/netdata:v1.29.0-armhf
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      org.label-schema.group: monitoring
+    pid: host
+    restart: unless-stopped
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - type: volume
+        source: "netdata_netdataconfig"
+        target: /etc/netdata
+        volume: {}
+      - type: volume
+        source: "netdata_netdatalib"
+        target: /var/lib/netdata
+        volume: {}
+      - type: volume
+        source: "netdata_netdatacache"
+        target: /var/cache/netdata
+        volume: {}
+      - type: bind
+        source: /
+        target: /host/root
+        read_only: true
+        bind:
+          propagation: rslave
+          create_host_path: true
+      - type: bind
+        source: /etc/passwd
+        target: /host/etc/passwd
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /etc/group
+        target: /host/etc/group
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /proc
+        target: /host/proc
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /sys
+        target: /host/sys
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /etc/os-release
+        target: /host/etc/os-release
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /var/log
+        target: /host/var/log
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+        bind:
+          create_host_path: true
+    ports: [19999]
+    devices: []
+    command: []
+    environment: []
+    network_mode: host
+    privileged: true
+    hostname: tc-netdata
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 3787M
+volumes:
+  netdata_netdatacache: {}
+  netdata_netdataconfig: {}
+  netdata_netdatalib: {}
+x-casaos:
+  hostname: "192.168.50.192"
+  scheme: http
+  index: /
+  port_map: ""
+  author: self
+  category: self
+  icon: "https://styles.redditmedia.com/t5_3j3ok/styles/communityIcon_71blrt3pw9091.png"
+  title:
+    custom: "TCD Host Stat Monitoring"
