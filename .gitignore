@@ -32,3 +32,5 @@ my.cnf
 
 /monash-docker-workspace.code-workspace
 smashing-dashboard/custom/*
+pangolin-stack/*/config/**
+pangolin-stack/*/data/**
