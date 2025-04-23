@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "minor_version": 16,
+  "key": "core.entity_registry",
+  "data": {
+    "entities": [
+      {"aliases":[],"area_id":null,"categories":{},"capabilities":{"options":["idle","create_backup","blocked","receive_backup","restore_backup"]},"config_entry_id":"01JSJ4JQTAFRPQTP5EPEFMTWA8","config_subentry_id":null,"created_at":"2025-04-23T20:14:12.301128+00:00","device_class":null,"device_id":"77daab16eefe2787e9b16719e3d7ec4c","disabled_by":null,"entity_category":null,"entity_id":"sensor.backup_backup_manager_state","hidden_by":null,"icon":null,"id":"4beb5ff63995d18fa8eb381eb45b5903","has_entity_name":true,"labels":[],"modified_at":"2025-04-23T20:14:12.301183+00:00","name":null,"options":{},"original_device_class":"enum","original_icon":null,"original_name":"Backup Manager state","platform":"backup","supported_features":0,"translation_key":"backup_manager_state","unique_id":"backup_manager_state","previous_unique_id":null,"unit_of_measurement":null},
+      {"aliases":[],"area_id":null,"categories":{},"capabilities":null,"config_entry_id":"01JSJ4JQTAFRPQTP5EPEFMTWA8","config_subentry_id":null,"created_at":"2025-04-23T20:14:12.301409+00:00","device_class":null,"device_id":"77daab16eefe2787e9b16719e3d7ec4c","disabled_by":null,"entity_category":null,"entity_id":"sensor.backup_next_scheduled_automatic_backup","hidden_by":null,"icon":null,"id":"4a5393ea675248c60e2072bb5c553acd","has_entity_name":true,"labels":[],"modified_at":"2025-04-23T20:14:12.301447+00:00","name":null,"options":{},"original_device_class":"timestamp","original_icon":null,"original_name":"Next scheduled automatic backup","platform":"backup","supported_features":0,"translation_key":"next_scheduled_automatic_backup","unique_id":"next_scheduled_automatic_backup","previous_unique_id":null,"unit_of_measurement":null},
+      {"aliases":[],"area_id":null,"categories":{},"capabilities":null,"config_entry_id":"01JSJ4JQTAFRPQTP5EPEFMTWA8","config_subentry_id":null,"created_at":"2025-04-23T20:14:12.301584+00:00","device_class":null,"device_id":"77daab16eefe2787e9b16719e3d7ec4c","disabled_by":null,"entity_category":null,"entity_id":"sensor.backup_last_successful_automatic_backup","hidden_by":null,"icon":null,"id":"5cb61a6d18a5384e96a7d0661f936889","has_entity_name":true,"labels":[],"modified_at":"2025-04-23T20:14:12.301641+00:00","name":null,"options":{},"original_device_class":"timestamp","original_icon":null,"original_name":"Last successful automatic backup","platform":"backup","supported_features":0,"translation_key":"last_successful_automatic_backup","unique_id":"last_successful_automatic_backup","previous_unique_id":null,"unit_of_measurement":null}
+    ],
+    "deleted_entities": []
+  }
+}

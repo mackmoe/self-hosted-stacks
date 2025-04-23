@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "homekit.01JSJ5CVRE6FJJQENWY45858MN.aids",
+  "data": {
+    "allocations": {
+      "zone.home": 2125305288,
+      "backup.sensor.backup_manager_state": 1160381273,
+      "backup.sensor.next_scheduled_automatic_backup": 1433379487,
+      "backup.sensor.last_successful_automatic_backup": 265289623
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# configuration.yaml
+
+homeassistant:
+  name: Home
+  latitude: 40.7128
+  longitude: -74.0060
+  elevation: 10
+  unit_system: metric
+  time_zone: !env_var TZ
+homekit:
+  auto_start: true
+recorder:
+  db_url: !env_var MYSQL_HASS_URL

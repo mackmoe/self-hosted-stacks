@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "minor_version": 5,
+  "key": "core.config_entries",
+  "data": {
+    "entries": [
+      {"created_at":"2025-04-23T20:14:12.298384+00:00","data":{},"disabled_by":null,"discovery_keys":{},"domain":"backup","entry_id":"01JSJ4JQTAFRPQTP5EPEFMTWA8","minor_version":1,"modified_at":"2025-04-23T20:14:12.298385+00:00","options":{},"pref_disable_new_entities":false,"pref_disable_polling":false,"source":"system","subentries":[],"title":"Backup","unique_id":null,"version":1},
+      {"created_at":"2025-04-23T20:28:28.302396+00:00","data":{"auto_start":true,"index":0,"name":"Home Assistant Bridge","port":21063},"disabled_by":null,"discovery_keys":{},"domain":"homekit","entry_id":"01JSJ5CVRE6FJJQENWY45858MN","minor_version":1,"modified_at":"2025-04-23T20:28:28.303201+00:00","options":{"entity_config":{},"filter":{"exclude_domains":[],"exclude_entities":[],"exclude_entity_globs":[],"include_domains":[],"include_entities":[],"include_entity_globs":[]},"mode":"bridge"},"pref_disable_new_entities":false,"pref_disable_polling":false,"source":"import","subentries":[],"title":"Home Assistant Bridge:21063","unique_id":null,"version":1}
+    ]
+  }
+}
