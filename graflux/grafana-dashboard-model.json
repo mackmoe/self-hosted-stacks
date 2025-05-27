@@ -1,0 +1,293 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "da7c4ae1-50f6-4895-a37e-958f718634a5"
+      },
+      "description": "isnt it obvious?",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "da7c4ae1-50f6-4895-a37e-958f718634a5"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: -1h)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and \r\n    r._field == \"temperature\"\r\n  )",
+          "refId": "A"
+        }
+      ],
+      "title": "DWC Water Tempature Monitoring (°C)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "da7c4ae1-50f6-4895-a37e-958f718634a5"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 25,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "dark-blue",
+                "value": 0
+              },
+              {
+                "color": "dark-blue",
+                "value": 5
+              },
+              {
+                "color": "dark-blue",
+                "value": 10
+              },
+              {
+                "color": "dark-blue",
+                "value": 15
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 15.5
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 16
+              },
+              {
+                "color": "blue",
+                "value": 16.5
+              },
+              {
+                "color": "dark-green",
+                "value": 17
+              },
+              {
+                "color": "dark-green",
+                "value": 17.5
+              },
+              {
+                "color": "semi-dark-green",
+                "value": 18
+              },
+              {
+                "color": "semi-dark-green",
+                "value": 18.5
+              },
+              {
+                "color": "green",
+                "value": 19
+              },
+              {
+                "color": "green",
+                "value": 19.5
+              },
+              {
+                "color": "super-light-green",
+                "value": 20
+              },
+              {
+                "color": "super-light-green",
+                "value": 20.5
+              },
+              {
+                "color": "light-yellow",
+                "value": 21
+              },
+              {
+                "color": "light-yellow",
+                "value": 21.5
+              },
+              {
+                "color": "#EAB839",
+                "value": 22
+              },
+              {
+                "color": "light-orange",
+                "value": 22.5
+              },
+              {
+                "color": "light-red",
+                "value": 23
+              },
+              {
+                "color": "light-red",
+                "value": 23.5
+              },
+              {
+                "color": "red",
+                "value": 24
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 24.5
+              },
+              {
+                "color": "dark-red",
+                "value": 25
+              },
+              {
+                "color": "dark-red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.5.17",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "da7c4ae1-50f6-4895-a37e-958f718634a5"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: -1h)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and \r\n    r._field == \"temperature\"\r\n  )\r\n  |> last()\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Water Temp (°C)",
+      "type": "gauge"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "🌊DWC 💧Water  🌡️Temperature 🦉Monitoring Copy",
+  "uid": "d7108ab9-f437-44e9-a873-3fbe75c77fce",
+  "version": 1,
+  "weekStart": ""
+}

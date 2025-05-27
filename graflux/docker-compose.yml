@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  grafana:
+    env_file:
+      - influxv2.env
+    image: grafana/grafana-oss #grafana/grafana:9.5.17
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      GRAFANA_USER: "${GF_SECURITY_ADMIN_USER:-admin}"
+      GRAFANA_PASSWORD: "${GF_SECURITY_ADMIN_PASSWORD:-admin_pass}"
+    depends_on:
+      - influxdb
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana  # Mount the Grafana data directory
+
+  influxdb:
+    image: influxdb:2.6-alpine
+    container_name: influxdb
+    env_file:
+      - influxv2.env
+    volumes:
+      # Mount for influxdb data directory and configuration
+      - influxdbv2_data:/var/lib/influxdb2:rw
+    ports:
+      - "8086:8086"
+  telegraf:
+    image: telegraf:1.25-alpine-latest
+    container_name: telegraf
+    depends_on:
+      - influxdb
+    volumes:
+      # Mount for telegraf config
+      - telegraf_data:/var/lib/telegraf:rw
+    command: ["--config", "/var/lib/telegraf/telegraf.conf"]
+    env_file:
+      - influxv2.env
+    cap_add:
+      - NET_RAW
+      - NET_BIND_SERVICE
+    ports:
+      - "8125:8125"
+
+volumes:
+  influxdbv2_data:
+  grafana_data:
+  telegraf_data:
