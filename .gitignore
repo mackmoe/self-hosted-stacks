@@ -25,11 +25,14 @@ _book
 *.toml
 my.cnf
 */docker_secrets/*
+*/grafana_data/*
 
 #ignored app stacks
 /arrr*
 /authelia*
-
+graflux/grafana/*
+graflux/influxdb2/*
+graflux/telegraf/*
 /monash-docker-workspace.code-workspace
 smashing-dashboard/custom/*
 pangolin-stack/*/config/**
