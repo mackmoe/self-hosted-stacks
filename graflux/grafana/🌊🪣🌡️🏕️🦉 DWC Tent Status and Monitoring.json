@@ -1,0 +1,1377 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "Predictions based on ± .1 degree change",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "index": 1,
+                  "text": "🌊Stable🟢"
+                },
+                "1": {
+                  "index": 0,
+                  "text": "♨️Rising🔴"
+                },
+                "-1": {
+                  "index": 2,
+                  "text": "🧊Cooling🔵"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r._field == \"temperature\"\r\n  )\r\n  |> aggregateWindow(every: 1m, fn: mean)\r\n  |> derivative(unit: 1m, nonNegative: false)\r\n  |> last()\r\n  |> map(fn: (r) => ({\r\n      _time: r._time,\r\n      trend_code:\r\n        if r._value > 0.1 then 1\r\n        else if r._value < -0.05 then -1\r\n        else 0\r\n    }))\r\n  |> keep(columns: [\"_time\", \"trend_code\"])\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Live🔴Hydro🪣Temperature🌡️Prediction🔮",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "### Optimal DWC Reservoir Temperature Range\n- <17°C 🥶Roots can stunt, slow growth\n- 18-20°C 😍Max O₂, low root rot risk \n- 21–22°C 😎“OK” with bennies\n- 23–24°C 🦠pathogens for root rot\n- 25–26°C 👹Fast root rot, O₂ drops\n- <26°C ☠️Pathogens thrive, Roots suffocate\n",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 30,
+          "min": 10,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-blue",
+                "value": 0
+              },
+              {
+                "color": "dark-blue",
+                "value": 11
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 12
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 13
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 14
+              },
+              {
+                "color": "light-blue",
+                "value": 15
+              },
+              {
+                "color": "super-light-blue",
+                "value": 16
+              },
+              {
+                "color": "light-green",
+                "value": 17
+              },
+              {
+                "color": "green",
+                "value": 18
+              },
+              {
+                "color": "green",
+                "value": 19
+              },
+              {
+                "color": "green",
+                "value": 20
+              },
+              {
+                "color": "light-green",
+                "value": 21
+              },
+              {
+                "color": "light-green",
+                "value": 22
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 23
+              },
+              {
+                "color": "super-light-orange",
+                "value": 24
+              },
+              {
+                "color": "light-orange",
+                "value": 25
+              },
+              {
+                "color": "red",
+                "value": 26
+              },
+              {
+                "color": "red",
+                "value": 27
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 28
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 29
+              },
+              {
+                "color": "dark-red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "aep2416edq4u8f"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: -15m)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r._field == \"temperature\" and\r\n    r.source == \"dwc_r4wifi\"\r\n  )\r\n  |> sort(columns: [\"_time\"], desc: true)\r\n  |> limit(n: 1)\r\n  |> keep(columns: [\"_value\", \"_time\"])\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Live🔴Hydro🪣Water💧Temperature🌡️ ",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "too hot 🥵🦠👹 || too cold 🥶❄️🧊 || just right 😍🥰☺️",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Temps were just right 😍🥰☺️"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Temps were too cold 🥶❄️🧊"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Temps were too hot 🥵🦠👹"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "aep2416edq4u8f"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r._field == \"temperature\"\r\n  )\r\n  |> map(fn: (r) => ({\r\n      r with\r\n      category: if r._value < 17.0 then \"too cold 🥶❄️🧊\"\r\n                else if r._value < 23.0 then \"just right 😍🥰☺️\"\r\n                else \"too hot 🥵🦠👹\"\r\n    }))\r\n  |> group(columns: [\"category\"])\r\n  |> count(column: \"_value\")\r\n  |> rename(columns: { _value: \"Temps were\" })\r\n  |> keep(columns: [\"category\", \"Temps were\"])\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Relative⬅️➡️Hydro🪣Tempature🌡️History📜",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlYlRd"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Water Temps",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1.5,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-blue",
+                "value": 0
+              },
+              {
+                "color": "dark-blue",
+                "value": 10
+              },
+              {
+                "color": "dark-blue",
+                "value": 11
+              },
+              {
+                "color": "dark-blue",
+                "value": 12
+              },
+              {
+                "color": "dark-blue",
+                "value": 13
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 14
+              },
+              {
+                "color": "blue",
+                "value": 15
+              },
+              {
+                "color": "light-blue",
+                "value": 16
+              },
+              {
+                "color": "super-light-green",
+                "value": 17
+              },
+              {
+                "color": "green",
+                "value": 18
+              },
+              {
+                "color": "green",
+                "value": 19
+              },
+              {
+                "color": "light-green",
+                "value": 20
+              },
+              {
+                "color": "light-yellow",
+                "value": 21
+              },
+              {
+                "color": "yellow",
+                "value": 22
+              },
+              {
+                "color": "light-orange",
+                "value": 23
+              },
+              {
+                "color": "orange",
+                "value": 24
+              },
+              {
+                "color": "light-red",
+                "value": 25
+              },
+              {
+                "color": "red",
+                "value": 26
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 27
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 28
+              },
+              {
+                "color": "dark-red",
+                "value": 29
+              },
+              {
+                "color": "dark-red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": true,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "aep2416edq4u8f"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: v.timeRangeStart)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r._field == \"temperature\"\r\n  )\r\n  |> aggregateWindow(every: 200s, fn: last, createEmpty: false)\r\n  |> keep(columns: [\"_time\", \"_value\", \"_field\"])\r\n  |> yield(name: \"30s_points\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "30m",
+      "title": "Hydro🪣Temperature🌡️Stats📊",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "countdown to reservoir change",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "h"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 3
+      },
+      "id": 18,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "query": "lastReset = from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: -7d)\r\n  |> filter(fn: (r) =>\r\n      r._measurement == \"week_reset\" and\r\n      r._field == \"value\"\r\n    )\r\n  |> last()\r\n\r\nlastReset\r\n  |> map(fn: (r) => ({\r\n      time_left_hours: 168.0 - float(v: uint(v: now()) - uint(v: r._time)) / 3600000000000.0\r\n    }))\r\n  |> keep(columns: [\"time_left_hours\"])\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "🚿♻️Next Res Change In🪣⏱️",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "How Long it's Been since I've had to put Ice in the Bucket",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "h"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 6
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "aep2416edq4u8f"
+          },
+          "hide": false,
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: -100y)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"manual_cooling_events\" and\r\n    r._field == \"value\"\r\n  )\r\n  |> sort(columns: [\"_time\"], desc: true)\r\n  |> limit(n: 1)\r\n  |> map(fn: (r) => ({\r\n    _time: now(),\r\n    _value: float(v: uint(v: now()) - uint(v: r._time)) / 3600000000000.0\r\n  }))\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "🛑🧊Ice Free Streak❄️😎",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlYlRd"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Water Temps",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1.5,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 22,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-blue",
+                "value": 0
+              },
+              {
+                "color": "dark-blue",
+                "value": 10
+              },
+              {
+                "color": "dark-blue",
+                "value": 11
+              },
+              {
+                "color": "dark-blue",
+                "value": 12
+              },
+              {
+                "color": "dark-blue",
+                "value": 13
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 14
+              },
+              {
+                "color": "blue",
+                "value": 15
+              },
+              {
+                "color": "light-blue",
+                "value": 16
+              },
+              {
+                "color": "super-light-green",
+                "value": 17
+              },
+              {
+                "color": "green",
+                "value": 18
+              },
+              {
+                "color": "green",
+                "value": 19
+              },
+              {
+                "color": "light-green",
+                "value": 20
+              },
+              {
+                "color": "light-yellow",
+                "value": 21
+              },
+              {
+                "color": "yellow",
+                "value": 22
+              },
+              {
+                "color": "light-orange",
+                "value": 23
+              },
+              {
+                "color": "orange",
+                "value": 24
+              },
+              {
+                "color": "light-red",
+                "value": 25
+              },
+              {
+                "color": "red",
+                "value": 26
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 27
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 28
+              },
+              {
+                "color": "dark-red",
+                "value": 29
+              },
+              {
+                "color": "dark-red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 0,
+        "y": 9
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "aep2416edq4u8f"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r._field == \"temperature\"\r\n  )\r\n  |> aggregateWindow(every: 22m, fn: last, createEmpty: false)\r\n  // — keep only time, value, and field (remove the “source” tag)\r\n  |> keep(columns: [\"_time\", \"_value\", \"_field\"])\r\n  |> yield(name: \"30m-points\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "3h",
+      "title": "Hydro🪣Temperature🌡️Stats📊",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlYlRd"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Water Temps",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1.5,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 22,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-blue",
+                "value": 0
+              },
+              {
+                "color": "dark-blue",
+                "value": 10
+              },
+              {
+                "color": "dark-blue",
+                "value": 11
+              },
+              {
+                "color": "dark-blue",
+                "value": 12
+              },
+              {
+                "color": "dark-blue",
+                "value": 13
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 14
+              },
+              {
+                "color": "blue",
+                "value": 15
+              },
+              {
+                "color": "light-blue",
+                "value": 16
+              },
+              {
+                "color": "super-light-green",
+                "value": 17
+              },
+              {
+                "color": "green",
+                "value": 18
+              },
+              {
+                "color": "green",
+                "value": 19
+              },
+              {
+                "color": "light-green",
+                "value": 20
+              },
+              {
+                "color": "light-yellow",
+                "value": 21
+              },
+              {
+                "color": "yellow",
+                "value": 22
+              },
+              {
+                "color": "light-orange",
+                "value": 23
+              },
+              {
+                "color": "orange",
+                "value": 24
+              },
+              {
+                "color": "light-red",
+                "value": 25
+              },
+              {
+                "color": "red",
+                "value": 26
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 27
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 28
+              },
+              {
+                "color": "dark-red",
+                "value": 29
+              },
+              {
+                "color": "dark-red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "temperature"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 6,
+        "y": 9
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "aep2416edq4u8f"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r._field == \"temperature\"\r\n  )\r\n  |> aggregateWindow(every: 53m, fn: last, createEmpty: false)\r\n  // — keep only time, value, and field (remove the “source” tag)\r\n  |> keep(columns: [\"_time\", \"_value\", \"_field\"])\r\n  |> yield(name: \"30m-points\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "1d",
+      "title": "Hydro🪣Temperature🌡️Stats📊",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlYlRd"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Water Temps",
+            "axisPlacement": "right",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1.5,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 22,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-blue",
+                "value": 0
+              },
+              {
+                "color": "dark-blue",
+                "value": 10
+              },
+              {
+                "color": "dark-blue",
+                "value": 11
+              },
+              {
+                "color": "dark-blue",
+                "value": 12
+              },
+              {
+                "color": "dark-blue",
+                "value": 13
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 14
+              },
+              {
+                "color": "blue",
+                "value": 15
+              },
+              {
+                "color": "light-blue",
+                "value": 16
+              },
+              {
+                "color": "super-light-green",
+                "value": 17
+              },
+              {
+                "color": "green",
+                "value": 18
+              },
+              {
+                "color": "green",
+                "value": 19
+              },
+              {
+                "color": "light-green",
+                "value": 20
+              },
+              {
+                "color": "light-yellow",
+                "value": 21
+              },
+              {
+                "color": "yellow",
+                "value": 22
+              },
+              {
+                "color": "light-orange",
+                "value": 23
+              },
+              {
+                "color": "orange",
+                "value": 24
+              },
+              {
+                "color": "light-red",
+                "value": 25
+              },
+              {
+                "color": "red",
+                "value": 26
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 27
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 28
+              },
+              {
+                "color": "dark-red",
+                "value": 29
+              },
+              {
+                "color": "dark-red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "temperature"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 12,
+        "y": 9
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": true,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "aep2416edq4u8f"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: v.timeRangeStart)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r._field == \"temperature\"\r\n  )\r\n  |> aggregateWindow(every: 12h, fn: last, createEmpty: false)\r\n  |> keep(columns: [\"_time\", \"_value\", \"_field\"])\r\n  |> yield(name: \"1m_points\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "1w",
+      "title": "Hydro🪣Temperature🌡️Stats📊",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aep2416edq4u8f"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 9
+      },
+      "id": 13,
+      "options": {
+        "calculate": true,
+        "calculation": {
+          "xBuckets": {
+            "mode": "size",
+            "value": "1h"
+          },
+          "yBuckets": {
+            "mode": "size",
+            "scale": {
+              "type": "linear"
+            },
+            "value": "0.5"
+          }
+        },
+        "cellGap": 0.5,
+        "cellValues": {
+          "unit": "Hit(s)"
+        },
+        "color": {
+          "exponent": 0.5,
+          "fill": "dark-orange",
+          "mode": "scheme",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "Sinebow",
+          "steps": 128
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": true
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "tooltip": {
+          "mode": "single",
+          "showColorScale": true,
+          "yHistogram": true
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "reverse": false,
+          "unit": "celsius"
+        }
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "aep2416edq4u8f"
+          },
+          "query": "from(bucket: \"dwc_temp_monitoring\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n      r._measurement == \"http_listener_v2\" and\r\n      r._field       == \"temperature\"\r\n    )\r\n  |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) }))\r\n  |> keep(columns: [\"_time\", \"_value\"])\r\n  |> yield(name: \"hourly_temps\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": "1d",
+      "title": "Hydro🪣Water💧Temperature🌡️Distribution🧮History📜",
+      "type": "heatmap"
+    }
+  ],
+  "preload": false,
+  "refresh": "auto",
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "🌊🪣🌡️🏕️🦉 DWC Tent Status and Monitoring",
+  "uid": "090fb188-46b8-48f9-9a73-3c263b9a821c",
+  "version": 323
+}

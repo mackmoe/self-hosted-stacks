@@ -30,9 +30,6 @@ my.cnf
 #ignored app stacks
 /arrr*
 /authelia*
-graflux/grafana/*
-graflux/influxdb2/*
-graflux/telegraf/*
 /monash-docker-workspace.code-workspace
 smashing-dashboard/custom/*
 pangolin-stack/*/config/**
