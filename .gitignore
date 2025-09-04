@@ -26,6 +26,9 @@ _book
 my.cnf
 */docker_secrets/*
 */grafana_data/*
+**/venv/*
+**/__pycache__/*
+memos/memos-toolbox/memos_ready/**
 
 #ignored app stacks
 /arrr*
@@ -34,3 +37,4 @@ my.cnf
 smashing-dashboard/custom/*
 pangolin-stack/*/config/**
 pangolin-stack/*/data/**
+memos/local_memos/**
