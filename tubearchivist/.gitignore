@@ -1,0 +1,16 @@
+# python testing cache
+__pycache__
+.venv
+
+# django testing
+backend/static
+backend/staticfiles
+backend/.env
+
+# vscode custom conf
+.vscode
+
+# JavaScript stuff
+node_modules
+
+.editorconfig

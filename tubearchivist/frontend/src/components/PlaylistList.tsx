@@ -1,0 +1,89 @@
+import { Link } from 'react-router-dom';
+import Routes from '../configuration/routes/RouteList';
+import updatePlaylistSubscription from '../api/actions/updatePlaylistSubscription';
+import formatDate from '../functions/formatDates';
+import Button from './Button';
+import PlaylistThumbnail from './PlaylistThumbnail';
+import LoadingIndicator from './LoadingIndicator';
+import { useUserConfigStore } from '../stores/UserConfigStore';
+import { PlaylistType } from '../api/loader/loadPlaylistById';
+
+type PlaylistListProps = {
+  playlistList: PlaylistType[] | undefined;
+  setRefresh: (status: boolean) => void;
+};
+
+const PlaylistList = ({ playlistList, setRefresh }: PlaylistListProps) => {
+  const { userConfig } = useUserConfigStore();
+  const viewStyle = userConfig.view_style_playlist;
+
+  if (!playlistList) {
+    return <LoadingIndicator />;
+  }
+  if (playlistList.length === 0) {
+    return <h2>No playlists found...</h2>;
+  }
+
+  return (
+    <>
+      {playlistList.map((playlist: PlaylistType) => {
+        return (
+          <div key={playlist.playlist_id} className={`playlist-item ${viewStyle}`}>
+            <div className="playlist-thumbnail">
+              <Link to={Routes.Playlist(playlist.playlist_id)}>
+                <PlaylistThumbnail
+                  playlistId={playlist.playlist_id}
+                  playlistThumbnail={playlist.playlist_thumbnail}
+                />
+              </Link>
+            </div>
+            <div className={`playlist-desc ${viewStyle}`}>
+              {playlist.playlist_type != 'custom' && (
+                <Link to={Routes.Channel(playlist.playlist_channel_id)}>
+                  <h3>{playlist.playlist_channel}</h3>
+                </Link>
+              )}
+
+              <Link to={Routes.Playlist(playlist.playlist_id)}>
+                <h2>{playlist.playlist_name}</h2>
+              </Link>
+
+              <p>Last refreshed: {formatDate(playlist.playlist_last_refresh)}</p>
+
+              {playlist.playlist_type != 'custom' && (
+                <>
+                  {playlist.playlist_subscribed && (
+                    <Button
+                      label="Unsubscribe"
+                      className="unsubscribe"
+                      type="button"
+                      title={`Unsubscribe from ${playlist.playlist_name}`}
+                      onClick={async () => {
+                        await updatePlaylistSubscription(playlist.playlist_id, false);
+                        setRefresh(true);
+                      }}
+                    />
+                  )}
+
+                  {!playlist.playlist_subscribed && (
+                    <Button
+                      label="Subscribe"
+                      type="button"
+                      title={`Subscribe to ${playlist.playlist_name}`}
+                      onClick={async () => {
+                        await updatePlaylistSubscription(playlist.playlist_id, true);
+                        setRefresh(true);
+                      }}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+export default PlaylistList;

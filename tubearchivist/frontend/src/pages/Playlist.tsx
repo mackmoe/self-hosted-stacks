@@ -1,0 +1,398 @@
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom';
+import loadPlaylistById, { PlaylistResponseType } from '../api/loader/loadPlaylistById';
+import { OutletContextType } from './Base';
+import { VideoType } from './Home';
+import Filterbar from '../components/Filterbar';
+import loadChannelById, { ChannelResponseType } from '../api/loader/loadChannelById';
+import VideoList from '../components/VideoList';
+import Pagination, { PaginationType } from '../components/Pagination';
+import ChannelOverview from '../components/ChannelOverview';
+import Linkify from '../components/Linkify';
+import {
+  ViewStyleNames,
+  ViewStyleNamesType,
+  ViewStylesEnum,
+} from '../configuration/constants/ViewStyle';
+import updatePlaylistSubscription from '../api/actions/updatePlaylistSubscription';
+import deletePlaylist from '../api/actions/deletePlaylist';
+import Routes from '../configuration/routes/RouteList';
+import formatDate from '../functions/formatDates';
+import queueReindex from '../api/actions/queueReindex';
+import updateWatchedState from '../api/actions/updateWatchedState';
+import ScrollToTopOnNavigate from '../components/ScrollToTop';
+import EmbeddableVideoPlayer from '../components/EmbeddableVideoPlayer';
+import Button from '../components/Button';
+import loadVideoListByFilter, {
+  VideoTypes,
+  WatchTypes,
+  WatchTypesEnum,
+} from '../api/loader/loadVideoListByPage';
+import useIsAdmin from '../functions/useIsAdmin';
+import { useUserConfigStore } from '../stores/UserConfigStore';
+import { ApiResponseType } from '../functions/APIClient';
+import NotFound from './NotFound';
+import updatePlaylistSortOrder from '../api/actions/updatePlaylistSortOrder';
+import { useFilterBarTempConf } from '../stores/FilterbarTempConf';
+import { HideWatchedType, HideWatchedName } from '../configuration/constants/HideWatched';
+
+export type VideoResponseType = {
+  data?: VideoType[];
+  paginate?: PaginationType;
+};
+
+const Playlist = () => {
+  const { playlistId } = useParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const videoId = searchParams.get('videoId');
+
+  const { userConfig } = useUserConfigStore();
+  const { filterHeight } = useFilterBarTempConf();
+  const { currentPage, setCurrentPage } = useOutletContext() as OutletContextType;
+  const isAdmin = useIsAdmin();
+
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [reindex, setReindex] = useState(false);
+
+  const [playlistResponse, setPlaylistResponse] = useState<ApiResponseType<PlaylistResponseType>>();
+  const [channelResponse, setChannelResponse] = useState<ApiResponseType<ChannelResponseType>>();
+  const [videoResponse, setVideoResponse] = useState<ApiResponseType<VideoResponseType>>();
+
+  const { data: playlistResponseData, error: playlistResponseError } = playlistResponse ?? {};
+  const { data: channelResponseData } = channelResponse ?? {};
+  const { data: videoResponseData } = videoResponse ?? {};
+
+  const playlist = playlistResponseData;
+  const channel = channelResponseData;
+  const videos = videoResponseData?.data;
+  const pagination = videoResponseData?.paginate;
+
+  const palylistEntries = playlistResponseData?.playlist_entries;
+  const videoArchivedCount = Number(palylistEntries?.filter(video => video.downloaded).length);
+  const videoInPlaylistCount = Number(palylistEntries?.length);
+
+  const viewStyle = userConfig.view_style_home; // its a list of videos, so view_style_home
+  const gridItems = userConfig.grid_items;
+  const isGridView = viewStyle === ViewStylesEnum.Grid || ViewStylesEnum.Table;
+  const gridView = isGridView ? `boxed-${gridItems}` : '';
+  const gridViewGrid = isGridView ? `grid-${gridItems}` : '';
+
+  useEffect(() => {
+    (async () => {
+      const playlist = await loadPlaylistById(playlistId);
+      const video = await loadVideoListByFilter({
+        playlist: playlistId,
+        page: currentPage,
+        watch:
+          userConfig.hide_watched_playlist === null
+            ? null
+            : ((userConfig.hide_watched_playlist
+                ? WatchTypesEnum.Watched
+                : WatchTypesEnum.Unwatched) as WatchTypes),
+        type: userConfig.vid_type_filter as VideoTypes,
+        height: filterHeight,
+      });
+
+      setPlaylistResponse(playlist);
+      setVideoResponse(video);
+
+      const { data: playlistResponseData } = playlist ?? {};
+
+      const isCustomPlaylist = playlistResponseData?.playlist_type === 'custom';
+      if (!isCustomPlaylist) {
+        const channel = await loadChannelById(playlistResponseData?.playlist_channel_id || '');
+        setChannelResponse(channel);
+      }
+      setRefresh(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    playlistId,
+    userConfig.hide_watched_playlist,
+    userConfig.vid_type_filter,
+    filterHeight,
+    refresh,
+    currentPage,
+    pagination?.current_page,
+    videoId,
+  ]);
+
+  const errorMessage = playlistResponseError?.error;
+
+  if (errorMessage) {
+    return <NotFound failType="playlist" />;
+  }
+
+  if (!playlist || !playlistId) return [];
+
+  const isCustomPlaylist = playlist.playlist_type === 'custom';
+
+  return (
+    <>
+      <title>{`TA | Playlist: ${playlist.playlist_name}`}</title>
+      <ScrollToTopOnNavigate />
+      <div className="boxed-content">
+        <div className="title-bar">
+          <h1>{playlist.playlist_name}</h1>
+        </div>
+        <div className="info-box info-box-3">
+          {!isCustomPlaylist && channel && (
+            <ChannelOverview
+              channelId={channel?.channel_id}
+              channelname={channel?.channel_name}
+              channelSubs={channel?.channel_subs}
+              channelSubscribed={channel?.channel_subscribed}
+              channelThumbUrl={channel.channel_thumb_url}
+              setRefresh={setRefresh}
+            />
+          )}
+
+          <div className="info-box-item">
+            <div>
+              <p>Last refreshed: {formatDate(playlist.playlist_last_refresh)}</p>
+              {!isCustomPlaylist && (
+                <>
+                  <p>
+                    Playlist:
+                    {playlist.playlist_subscribed && (
+                      <>
+                        {isAdmin && (
+                          <Button
+                            label="Unsubscribe"
+                            className="unsubscribe"
+                            type="button"
+                            title={`Unsubscribe from ${playlist.playlist_name}`}
+                            onClick={async () => {
+                              await updatePlaylistSubscription(playlistId, false);
+
+                              setRefresh(true);
+                            }}
+                          />
+                        )}
+                      </>
+                    )}{' '}
+                    {!playlist.playlist_subscribed && (
+                      <Button
+                        label="Subscribe"
+                        type="button"
+                        title={`Subscribe to ${playlist.playlist_name}`}
+                        onClick={async () => {
+                          await updatePlaylistSubscription(playlistId, true);
+
+                          setRefresh(true);
+                        }}
+                      />
+                    )}
+                  </p>
+                  {playlist.playlist_active && (
+                    <p>
+                      Youtube:{' '}
+                      <a
+                        href={`https://www.youtube.com/playlist?list=${playlist.playlist_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Active
+                      </a>
+                    </p>
+                  )}
+                  {!playlist.playlist_active && <p>Youtube: Deactivated</p>}
+                </>
+              )}
+
+              {!showDeleteConfirm && (
+                <Button
+                  label="Delete Playlist"
+                  id="delete-item"
+                  onClick={() => setShowDeleteConfirm(!showDeleteConfirm)}
+                />
+              )}
+
+              {showDeleteConfirm && (
+                <div className="delete-confirm">
+                  <span>Delete {playlist.playlist_name}?</span>
+
+                  <Button
+                    label="Delete metadata"
+                    onClick={async () => {
+                      await deletePlaylist(playlistId, false);
+                      navigate(Routes.Playlists);
+                    }}
+                  />
+
+                  <Button
+                    label="Delete all"
+                    className="danger-button"
+                    onClick={async () => {
+                      await deletePlaylist(playlistId, true);
+                      navigate(Routes.Playlists);
+                    }}
+                  />
+
+                  <Button label="Cancel" onClick={() => setShowDeleteConfirm(!showDeleteConfirm)} />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="info-box-item">
+            <div>
+              {videoArchivedCount > 0 && (
+                <>
+                  <p>
+                    Total Videos archived: {videoArchivedCount}/{videoInPlaylistCount}
+                  </p>
+                  <div id="watched-button" className="button-box">
+                    <Button
+                      label="Mark as watched"
+                      title={`Mark all videos from ${playlist.playlist_name} as watched`}
+                      type="button"
+                      onClick={async () => {
+                        await updateWatchedState({
+                          id: playlistId,
+                          is_watched: true,
+                        });
+
+                        setRefresh(true);
+                      }}
+                    />{' '}
+                    <Button
+                      label="Mark as unwatched"
+                      title={`Mark all videos from ${playlist.playlist_name} as unwatched`}
+                      type="button"
+                      onClick={async () => {
+                        await updateWatchedState({
+                          id: playlistId,
+                          is_watched: false,
+                        });
+
+                        setRefresh(true);
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+
+              {reindex && <p>Reindex scheduled</p>}
+              {!reindex && (
+                <div id="reindex-button" className="button-box">
+                  {!isCustomPlaylist && (
+                    <Button
+                      label="Reindex"
+                      title={`Reindex Playlist ${playlist.playlist_name}`}
+                      onClick={async () => {
+                        setReindex(true);
+
+                        await queueReindex(playlist.playlist_id, 'playlist');
+                      }}
+                    />
+                  )}{' '}
+                  <Button
+                    label="Reindex Videos"
+                    title={`Reindex Videos of ${playlist.playlist_name}`}
+                    onClick={async () => {
+                      setReindex(true);
+
+                      await queueReindex(playlist.playlist_id, 'playlist', true);
+                    }}
+                  />
+                </div>
+              )}
+              {playlist.playlist_type !== 'custom' && (
+                <div className="toggle">
+                  <span>Switch sort order:</span>
+                  <div className="toggleBox">
+                    <input
+                      id="playlist_sort_order"
+                      type="checkbox"
+                      checked={playlist.playlist_sort_order === 'bottom'}
+                      onChange={async () => {
+                        const newSortOrder =
+                          playlist.playlist_sort_order === 'top' ? 'bottom' : 'top';
+                        await updatePlaylistSortOrder(playlist.playlist_id, newSortOrder);
+                        setRefresh(true);
+                      }}
+                    />
+                    {playlist.playlist_sort_order === 'bottom' ? (
+                      <label htmlFor="" className="onbtn">
+                        On
+                      </label>
+                    ) : (
+                      <label htmlFor="" className="ofbtn">
+                        Off
+                      </label>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {playlist.playlist_description !== 'False' && (
+          <div className="description-box">
+            <p
+              id={descriptionExpanded ? 'text-expand-expanded' : 'text-expand'}
+              className="description-text"
+            >
+              <Linkify>{playlist.playlist_description}</Linkify>
+            </p>
+
+            <Button
+              label="Show more"
+              id="text-expand-button"
+              onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className={`boxed-content ${gridView}`}>
+        <Filterbar
+          viewStyle={ViewStyleNames.Home as ViewStyleNamesType} // its a list of videos, so ViewStyleNames.Home
+          hideWatched={HideWatchedName.Playlist as HideWatchedType}
+          showSort={false}
+          showTypeFilter={true}
+        />
+      </div>
+
+      <EmbeddableVideoPlayer videoId={videoId} />
+
+      <div className={`boxed-content ${gridView}`}>
+        <div className={`video-list ${viewStyle} ${gridViewGrid}`}>
+          <VideoList
+            videoList={videos}
+            viewStyle={viewStyle}
+            playlistId={playlistId}
+            showReorderButton={isCustomPlaylist}
+            refreshVideoList={setRefresh}
+          />
+          {videoInPlaylistCount === 0 && (
+            <>
+              {isCustomPlaylist && (
+                <p>
+                  Try going to the <Link to={Routes.Home}>home page</Link> to add videos to this
+                  playlist.
+                </p>
+              )}
+              {!isCustomPlaylist && (
+                <p>
+                  Try going to the <Link to={Routes.Downloads}>downloads page</Link> to start the
+                  scan and download tasks.
+                </p>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="boxed-content">
+        {pagination && <Pagination pagination={pagination} setPage={setCurrentPage} />}
+      </div>
+    </>
+  );
+};
+
+export default Playlist;
