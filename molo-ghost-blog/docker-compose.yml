@@ -4,6 +4,7 @@
 ---
 networks:
   net: {}
+
 services:
   proxy:
     image: nginx:latest
@@ -11,51 +12,55 @@ services:
     networks:
       - net
     ports:
-      - ":80"
-      - ":443"
+      - "${PROXY_HTTP_PORT}:80"
+      - "${PROXY_HTTPS_PORT}:443"
     depends_on:
       - ghost
     volumes:
-      - $PWD/nginx/crt:/etc/ssl/certs/ghost.molovestoshare.com.crt:z
-      - $PWD/nginx/key:/etc/ssl/private/ghost.molovestoshare.com.key:z
-      - $PWD/nginx/ghost.conf:/etc/nginx/sites-enabled/ghost.conf:z
+      - ${NGINX_CRT_PATH}:/etc/ssl/certs/ghost.molovestoshare.com.crt:z
+      - ${NGINX_KEY_PATH}:/etc/ssl/private/ghost.molovestoshare.com.key:z
+      - ${NGINX_CONF_PATH}:/etc/nginx/conf.d/ghost.conf:z
+
   ghost:
-    image: ghost:latest
+    image: ghost:${GHOST_IMAGE_TAG}
     container_name: mologhost-blog
     hostname: ghost
     restart: always
     networks:
       - net
     ports:
-      - "2368:2368"
+      - "${GHOST_PORT}:2368"
     depends_on:
       - gdb
     environment:
-      url: https://ghost.molovestoshare.com/
+      url: ${GHOST_URL}
       database__client: mysql
-      database__connection__host: mologhost-deebee
-      database__connection__user: "ghost"
-      database__connection__password: "ghostdbpass"
-      database__connection__database: "ghostdb"
-      database__connection__port: "3306"
-      comments: false
+      database__connection__host: ${DB_HOST}
+      database__connection__user: ${DB_USER}
+      database__connection__password: ${DB_PASSWORD}
+      database__connection__database: ${DB_NAME}
+      database__connection__port: ${DB_PORT}
+      comments__url: ${GHOST_COMMENTS_URL}
+      comments__styles: ${GHOST_COMMENTS_STYLES}
     volumes:
-      - /data/compose/ghost/content:/var/lib/ghost/content
+      - ${GHOST_CONTENT_PATH}:/var/lib/ghost/content
+
   gdb:
-    image: mariadb:latest
+    image: mariadb:${MARIADB_IMAGE_TAG}
     container_name: mologhost-deebee
     restart: always
     command: "--max-allowed-packet=5242880"
     environment:
-      MYSQL_ROOT_PASSWORD: your_mysql_root_password
-      MYSQL_USER: ghost
-      MYSQL_PASSWORD: ghostdbpass
-      MYSQL_DATABASE: ghostdb
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
     networks:
       - net
     ports:
-      - ":3306"
+      - "${DB_PORT}:3306"
     expose:
       - "3306"
     volumes:
-      - /data/compose/ghost/mariadb:/var/lib/mysql
+      - ${MARIADB_DATA_PATH}:/var/lib/mysql
+

@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  nexus:
+    image: sonatype/nexus3:latest
+    container_name: nexus
+    restart: always
+    ports:
+      - "8081:8081" # Nexus UI and default port
+      - "8082:8082" # Example port for Docker hosted repository
+      - "5000:5000" # Port used in cfg for Docker registry
+    volumes:
+      - nexus-data:/nexus-data # Mount a volume for persistent data
+
+volumes:
+  nexus-data:
+    driver: local

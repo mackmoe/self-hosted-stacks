@@ -2,7 +2,6 @@
 # Description: A container-based solution for automating Docker container base image updates.
 # Icon URL: https://containrrr.dev/watchtower/images/logo-450px.png
 # NOTE: Multiple instances can't run with the same scope; An instance without a scope will clean up other running instances, even if they have a defined scope
-version: '3.9'
 services:
   watchtower:
     container_name: watchtower

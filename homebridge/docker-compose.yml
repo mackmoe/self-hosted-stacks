@@ -2,9 +2,6 @@
 # Description: HomeKit API for the Impatient
 # Icon URL: https://raw.githubusercontent.com/homebridge/branding/master/logos/homebridge-color-round-stylized.png
 # NOTES: container missing bluez-hcidump pkg
-
-version: '2'
-
 volumes:
   homebridge_data: {}
 
