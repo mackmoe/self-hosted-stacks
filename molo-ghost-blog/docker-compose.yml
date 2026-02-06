@@ -40,6 +40,7 @@ services:
       database__connection__password: ${DB_PASSWORD}
       database__connection__database: ${DB_NAME}
       database__connection__port: ${DB_PORT}
+      security__staffDeviceVerification: false
       comments__url: ${GHOST_COMMENTS_URL}
       comments__styles: ${GHOST_COMMENTS_STYLES}
     volumes:
